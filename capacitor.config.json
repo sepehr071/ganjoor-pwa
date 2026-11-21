@@ -1,0 +1,12 @@
+{
+  "appId": "io.github.sepehr071.ganjoor",
+  "appName": "گنجور",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 600,
+      "launchAutoHide": true,
+      "showSpinner": false
+    }
+  }
+}

@@ -1,0 +1,70 @@
+import { defineConfig } from 'vite'
+import preact from '@preact/preset-vite'
+import { VitePWA } from 'vite-plugin-pwa'
+
+const POET_IMG = /^https:\/\/api\.ganjoor\.net\/api\/ganjoor\/poet\/image\//
+// '/' locally and on Android; '/ganjoor-pwa/' for GitHub Pages (set by the Pages workflow).
+const base = process.env.BASE_PATH || '/'
+
+export default defineConfig({
+  base,
+  plugins: [
+    preact(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['icons/*.png', 'icon.svg', 'fonts/*.ttf', 'fonts/*.woff2'],
+      manifest: {
+        name: 'گنجور — نسخهٔ پیشنهادی',
+        short_name: 'گنجور',
+        description: 'نسخهٔ پیشنهادی و غیررسمی PWA برای گنجور: خواندن آرام شعر فارسی با خوانش و معنی. متن\u200cها از گنجور.',
+        lang: 'fa',
+        dir: 'rtl',
+        start_url: base,
+        scope: base,
+        display: 'standalone',
+        background_color: '#f4eedf',
+        theme_color: '#0b1330',
+        icons: [
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: 'icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+      },
+      workbox: {
+        // The nastaliq woff2 (~160 KB) is not precached: it is cached on first use below.
+        globPatterns: ['**/*.{js,css,html,svg,png,ttf}', 'fonts/*.woff2'],
+        navigateFallback: base + 'index.html',
+        cleanupOutdatedCaches: true,
+        runtimeCaching: [
+          {
+            urlPattern: ({ url, request }) => request.destination === 'font' && url.origin === self.location.origin,
+            handler: 'CacheFirst',
+            options: { cacheName: 'fonts', expiration: { maxEntries: 10 } },
+          },
+          {
+            // Poet portraits: opaque (no-cors <img>) responses are fine here.
+            urlPattern: POET_IMG,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'poet-images',
+              expiration: { maxEntries: 150, maxAgeSeconds: 60 * 60 * 24 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            // Everything the app reads: poems you opened stay readable offline.
+            // Serialized into the service worker: it must not reference variables from this file.
+            urlPattern: ({ url, request }) => request.method === 'GET' && url.origin === 'https://api.ganjoor.net' && url.pathname.startsWith('/api/'),
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'ganjoor-api',
+              expiration: { maxEntries: 600, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+        ],
+      },
+    }),
+  ],
+  test: { environment: 'node' },
+})

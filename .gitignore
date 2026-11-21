@@ -1,0 +1,14 @@
+node_modules/
+dist/
+release/*.apk
+*.apk
+*.aab
+.env*
+*.log
+*.tmp
+.DS_Store
+.vscode/
+.idea/
+# android/.gitignore covers Gradle outputs, local.properties and copied web assets
+android/.gradle/
+android/local.properties

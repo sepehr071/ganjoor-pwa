@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>گنجور — نسخهٔ پیشنهادی</title>
+    <meta name="description" content="نسخهٔ پیشنهادی و غیررسمی PWA برای گنجور: خواندن آرام شعر فارسی با خوانش، معنی، جستجو بر پایهٔ معنا و خواندن آفلاین. متن&zwnj;ها از گنجور." />
+    <meta name="theme-color" content="#f4eedf" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1330" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="preload" href="/fonts/Vazirmatn-Regular.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/fonts/ganjoor-mark.woff2" as="font" type="font/woff2" crossorigin />
+    <script>
+      // Apply saved theme before first paint so there is no flash.
+      try {
+        var s = JSON.parse(localStorage.getItem('beyt:settings') || '{}')
+        var r = document.documentElement
+        if (s.theme === 'light' || s.theme === 'dark') r.setAttribute('data-theme', s.theme)
+        if (s.fontSize) r.style.setProperty('--font-size-poem', s.fontSize + 'px')
+        if (s.lineHeight) r.style.setProperty('--poem-lh', s.lineHeight)
+        if (s.poemFont === 'nastaliq') r.setAttribute('data-poem-font', 'nastaliq')
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>برای خواندن این نسخهٔ پیشنهادی گنجور جاوااسکریپت لازم است.</noscript>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
