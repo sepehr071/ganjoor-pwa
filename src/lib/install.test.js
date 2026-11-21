@@ -16,6 +16,6 @@ describe('install', () => {
   })
 
   it('points at the newest release APK', () => {
-    expect(APK_URL).toMatch(/\/releases\/latest\/download\/ganjoor-proposal-debug\.apk$/)
+    expect(APK_URL).toMatch(/\/releases\/latest\/download\/ganjoor\.apk$/)
   })
 })

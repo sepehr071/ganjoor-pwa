@@ -16,6 +16,23 @@ npm run android:open    # open android/ in Android Studio
 
 Output: `release/ganjoor-proposal-debug.apk` (debug-signed; not for the Play Store).
 
+## Release signing
+
+Releases (from v0.2.0) are signed with a private release key that lives outside the repo:
+`~/.ganjoor-signing/ganjoor-release.jks` (alias `ganjoor`, RSA 4096) plus `keystore.properties`
+(`storeFile`, `storePassword`, `keyAlias`, `keyPassword`). Never commit either file. Back the folder up: without it no
+future APK can update an installed one. `android/app/build.gradle` reads the properties from the path in the
+`GANJOOR_SIGNING` env var, else from `~/.ganjoor-signing/keystore.properties`; when neither exists the release build
+stays unsigned (`app-release-unsigned.apk`), so others and CI can still build.
+
+```bash
+npm run android:release   # vite build + cap sync android + gradlew assembleRelease, copies the signed APK to release/ganjoor.apk
+apksigner verify --print-certs release/ganjoor.apk
+```
+
+Bump `versionCode` and `versionName` in `android/app/build.gradle` for every release. The v0.1.0 APK was debug-signed
+with a different key: uninstall it before installing v0.2.0 or later (Android refuses an update signed by another key).
+
 Gradle behind the local proxy: this machine sets `systemProp.http(s).proxyHost/proxyPort` in `~/.gradle/gradle.properties`
 (not in the project). Java TLS handshakes through the proxy fail now and then ("Remote host terminated the handshake"):
 rerun the build, it resumes where it stopped.

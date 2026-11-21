@@ -2,7 +2,7 @@
 import { isNative } from './native.js'
 
 /** Always the newest release's APK (GitHub resolves /latest/ to the newest non-draft release). */
-export const APK_URL = 'https://github.com/sepehr071/ganjoor-pwa/releases/latest/download/ganjoor-proposal-debug.apk'
+export const APK_URL = 'https://github.com/sepehr071/ganjoor-pwa/releases/latest/download/ganjoor.apk'
 
 let deferred = null
 const subs = new Set()
