@@ -278,6 +278,16 @@ select.field { border-radius: var(--radius-sm); }
 .card {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--space-4);
 }
+/* "get the app" card: install the PWA or download the Android APK */
+.get-app { display: grid; gap: var(--space-3); border-color: color-mix(in srgb, var(--gold) 45%, var(--border)); }
+.get-app h2 { font-size: 1.1rem; margin: 0; }
+.get-app-head { display: flex; gap: var(--space-3); align-items: center; }
+.get-app-icon { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent); }
+.get-app-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.get-app-actions .btn { flex: 1 1 12rem; }
+.get-app-steps { margin: 0; padding-inline-start: 1.4rem; display: grid; gap: var(--space-1); }
+
 .list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
 /* every navigable row reads as a tappable card: surface, border, and a forward chevron (left in RTL) */
 :is(.list-link, a.ex-row, a.ex-poem-link) {

@@ -18,6 +18,7 @@ const P = {
   settings: 'M4 7h9M17 7h3M4 17h3M11 17h9M15 7a2 2 0 1 0 0 .01M9 17a2 2 0 1 0 0 .01',
   repeat: 'M5 12a6 6 0 0 1 6-6h8M16 3l3 3-3 3M19 12a6 6 0 0 1-6 6H5M8 21l-3-3 3-3',
   dots: 'M4.5 12h1.5M11.25 12h1.5M18 12h1.5',
+  phone: 'M8 3h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM11 18h2',
 }
 
 export function Icon({ name, size = 22, fill = false, class: cls }) {

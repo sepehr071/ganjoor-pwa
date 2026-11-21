@@ -7,6 +7,7 @@ import { coupletsFromPlain, coupletText, groupCouplets, poetName, toFaDigits } f
 import { usePlayer, play, toggle } from '../lib/player.js'
 import { Icon } from '../components/Icon.jsx'
 import { Arch } from '../components/Arch.jsx'
+import { GetApp } from '../components/GetApp.jsx'
 import { Emblem, Sarlowh, Shamseh } from '../components/Ornament.jsx'
 
 const TODAY = 'beyt:today'
@@ -177,6 +178,8 @@ export default function Home() {
             </ul>
           )}
         </section>
+
+        <GetApp />
       </div>
     </div>
   )

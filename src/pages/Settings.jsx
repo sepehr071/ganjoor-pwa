@@ -2,6 +2,7 @@ import { useTitle } from '../lib/hooks.js'
 import { url } from '../lib/base.js'
 import { useStored, SETTINGS, DEFAULT_SETTINGS } from '../lib/store.js'
 import { toFaDigits } from '../lib/poem.js'
+import { GetApp } from '../components/GetApp.jsx'
 
 const THEMES = [
   ['system', 'مطابق دستگاه'],
@@ -69,6 +70,8 @@ export default function Settings() {
         </p>
         <p><a href={url('/about')}>{'این طرح چه چیزی را بهتر می\u200cکند'}</a></p>
       </section>
+
+      <GetApp id="get-app-settings" />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { useTitle } from '../lib/hooks.js'
 import { Sarlowh } from '../components/Ornament.jsx'
+import { GetApp } from '../components/GetApp.jsx'
 
 const EXT = { target: '_blank', rel: 'noopener noreferrer' }
 
@@ -75,6 +76,8 @@ export default function About() {
           {' و API عمومی آن می\u200cآید و حق آن\u200cها با گنجور و همکارانش است. این طرح را گنجور نساخته و تأیید نکرده است؛ پیشنهادی است برای نسخهٔ موبایل و آفلاین آن.'}
         </p>
       </section>
+
+      <GetApp id="get-app-about" />
 
       <section class="folio signature" aria-labelledby="by">
         <h2 id="by" class="who">طراحی و ساخت: سپهر رادمرد</h2>
