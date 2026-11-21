@@ -129,7 +129,7 @@ function syncMediaSession() {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: state.poem.title,
       artist: rec?.audioArtist || '',
-      album: state.poem.poet || 'گنجور',
+      album: state.poem.poet || 'بیت',
     })
     navigator.mediaSession.playbackState = state.playing ? 'playing' : 'paused'
   } catch {}

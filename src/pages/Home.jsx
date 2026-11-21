@@ -53,7 +53,7 @@ function Hero() {
     <section class="hero lapis" aria-labelledby="hero-t" aria-busy={!c && !error}>
       <div class="hero-bar">
         <Emblem />
-        <span class="brand-word" aria-hidden="true">گنجور</span>
+        <span class="brand-word" aria-hidden="true">بیت</span>
         <a class="round-btn" href={url('/settings')} aria-label="تنظیمات"><Icon name="settings" size={21} /></a>
       </div>
       <Sarlowh />
@@ -120,7 +120,7 @@ export default function Home() {
 
   return (
     <div class="home">
-      <h1 class="sr-only">گنجور، نسخهٔ پیشنهادی PWA</h1>
+      <h1 class="sr-only">بیت: شعر فارسی بر پایهٔ گنجور</h1>
       <Hero />
       <div class="home-body wrap stack-lg">
         <form

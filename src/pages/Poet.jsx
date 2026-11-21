@@ -24,7 +24,7 @@ export default function Poet({ id }) {
         <BackButton fallback="/poets" class="round-btn glass" />
         {poet && (
           <button type="button" class="round-btn glass" aria-label={`هم\u200cرسانی صفحهٔ ${name}`}
-            onClick={() => share({ title: name, text: `${poet.name} در گنجور`, url: location.origin + url('/poet/' + poet.id) })}>
+            onClick={() => share({ title: name, text: `${poet.name} در بیت`, url: location.origin + url('/poet/' + poet.id) })}>
             <Icon name="share" size={20} />
           </button>
         )}

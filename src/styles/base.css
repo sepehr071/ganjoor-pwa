@@ -96,13 +96,7 @@ img { max-width: 100%; display: block; }
 }
 .brand-emblem { width: 1.75rem; height: 1.75rem; flex: none; }
 .brand-word {
-  font-family: 'Ganjoor Mark', var(--font-display); font-weight: 700; font-size: 1.45rem; line-height: 1;
-  margin-top: 1.1rem; /* the گ stroke rises far above the line: sit the word low so it is not clipped */
-}
-/* the "proposal" note lives in the footer and /about on a phone, and in the roomier desktop header */
-.brand-tag {
-  display: none; font-size: 0.72rem; line-height: 1; padding: 0.3rem 0.5rem; border-radius: 999px;
-  border: 1px solid var(--gold); color: var(--gold-ink); white-space: nowrap;
+  font-family: 'Beyt Mark', var(--font-display); font-weight: 700; font-size: 1.45rem; line-height: 1;
 }
 .hdr-settings { margin-inline-start: auto; }
 
@@ -177,7 +171,6 @@ main.bleed { max-width: none; padding-inline: 0; padding-top: 0; }
 }
 @media (min-width: 48rem) {
   .site-header { padding-inline: var(--space-5); }
-  .brand-tag { display: inline-block; }
   .nav {
     position: static; display: flex; gap: var(--space-1); height: auto; padding: 0; background: none; border: 0;
     -webkit-backdrop-filter: none; backdrop-filter: none; margin-inline-start: auto;

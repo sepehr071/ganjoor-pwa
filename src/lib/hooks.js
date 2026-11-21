@@ -32,10 +32,10 @@ export function useOnline() {
   return on
 }
 
-export const SITE_NAME = 'گنجور — نسخهٔ پیشنهادی'
+export const SITE_NAME = 'بیت: شعر فارسی بر پایهٔ گنجور'
 
-/** "<page> | گنجور (پیشنهادی)"; the home page (no title) gets the full name. */
-export const pageTitle = (title) => (title ? `${title} | گنجور (پیشنهادی)` : SITE_NAME)
+/** "<page> | بیت"; the home page (no title) gets the full name. */
+export const pageTitle = (title) => (title ? `${title} | بیت` : SITE_NAME)
 
 export function useTitle(title) {
   useEffect(() => {

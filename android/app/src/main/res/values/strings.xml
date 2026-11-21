@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">گنجور</string>
-    <string name="title_activity_main">گنجور</string>
+    <string name="app_name">بیت</string>
+    <string name="title_activity_main">بیت</string>
     <string name="package_name">io.github.sepehr071.ganjoor</string>
     <string name="custom_url_scheme">io.github.sepehr071.ganjoor</string>
 </resources>

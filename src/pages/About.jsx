@@ -29,38 +29,38 @@ const FEATURES = [
 ]
 
 export default function About() {
-  useTitle('درباره این طرح')
+  useTitle('درباره بیت')
   return (
     <div class="stack-lg">
       <header class="folio-head">
         <Sarlowh />
-        <h1>درباره این طرح</h1>
+        <h1>درباره بیت</h1>
         <p class="muted" style="max-width:38rem">
-          {'این یک نسخهٔ پیشنهادی و غیررسمی PWA برای گنجور است: همان شعرها و داده\u200cهای گنجور، در یک برنامهٔ وب نصب\u200cشدنی که سبک\u200cتر است، آفلاین کار می\u200cکند و روی گوشی راحت\u200cتر خوانده می\u200cشود.'}
+          {'بیت برنامه\u200cای مستقل و غیررسمی برای خواندن شعر فارسی است، ساخته بر پایهٔ داده\u200cهای باز و API عمومی گنجور: همان شعرها، معنی\u200cها و خوانش\u200cها، در برنامه\u200cای نصب\u200cشدنی که سبک است، آفلاین کار می\u200cکند و روی گوشی راحت خوانده می\u200cشود.'}
         </p>
       </header>
 
       <section class="stack" aria-labelledby="cmp">
-        <h2 id="cmp">{'چه چیزی بهتر می\u200cشود'}</h2>
+        <h2 id="cmp">{'بیت داده\u200cهای گنجور را چگونه می\u200cخواند'}</h2>
         <div class="compare-wrap">
           <table class="compare">
             <thead>
-              <tr><th scope="col">سنجه</th><th scope="col">گنجور امروز</th><th scope="col">این طرح</th></tr>
+              <tr><th scope="col">سنجه</th><th scope="col">سایت گنجور</th><th scope="col">بیت</th></tr>
             </thead>
             <tbody>
               {ROWS.map(([k, a, b]) => (
-                <tr key={k}><th scope="row">{k}</th><td data-label="گنجور امروز">{a}</td><td data-label="این طرح">{b}</td></tr>
+                <tr key={k}><th scope="row">{k}</th><td data-label="سایت گنجور">{a}</td><td data-label="بیت">{b}</td></tr>
               ))}
             </tbody>
           </table>
         </div>
         <p class="muted small">
-          {'اعداد گنجور از بررسی غزل نخست حافظ (ganjoor.net/hafez/ghazal/sh1) در نمای گوشی ۳۹۰ در ۸۴۴ پیکسل است؛ اعداد این طرح از همان غزل در همین برنامه.'}
+          {'اعداد سایت گنجور از بررسی غزل نخست حافظ (ganjoor.net/hafez/ghazal/sh1) در نمای گوشی ۳۹۰ در ۸۴۴ پیکسل است؛ اعداد بیت از همان غزل در همین برنامه.'}
         </p>
       </section>
 
       <section class="stack" aria-labelledby="ft">
-        <h2 id="ft">{'آنچه این نسخه دارد'}</h2>
+        <h2 id="ft">{'آنچه بیت دارد'}</h2>
         <ul class="features">
           {FEATURES.map((f) => (
             <li key={f}><span class="rosette" aria-hidden="true" />{f}</li>
@@ -73,7 +73,7 @@ export default function About() {
         <p>
           {'همهٔ شعرها، معنی\u200cها، خوانش\u200cها و تصویرها از '}
           <a href="https://ganjoor.net" {...EXT}>گنجور (ganjoor.net)</a>
-          {' و API عمومی آن می\u200cآید و حق آن\u200cها با گنجور و همکارانش است. این طرح را گنجور نساخته و تأیید نکرده است؛ پیشنهادی است برای نسخهٔ موبایل و آفلاین آن.'}
+          {' و API عمومی آن می\u200cآید و حق آن\u200cها با گنجور و همکارانش است. بیت را گنجور نساخته و تأیید نکرده است و با گنجور همکاری رسمی ندارد. برای پرسش، گزارش خطا یا پشتیبانی با سازندهٔ بیت تماس بگیرید (نشانی\u200cها در پایین همین صفحه)، نه با گنجور.'}
         </p>
       </section>
 

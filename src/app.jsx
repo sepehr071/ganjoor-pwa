@@ -35,7 +35,7 @@ const MORE = [
   { href: '/random', label: 'یک شعر تصادفی' },
   { href: '/history', label: 'خوانده\u200cشده\u200cها' },
   { href: '/settings', label: 'تنظیمات' },
-  { href: '/about', label: 'درباره این طرح' },
+  { href: '/about', label: 'درباره بیت' },
 ]
 // One line under each explore card in the hub, keyed by the route's icon.
 const NOTES = {
@@ -85,10 +85,9 @@ function Shell() {
     <div class="app" data-bar={OWN_BAR.test(path) ? 'own' : undefined}>
       <a class="skip-link" href="#main">رفتن به محتوا</a>
       <header class="site-header">
-        <a class="brand" href={url('/')} aria-label="گنجور، نسخهٔ پیشنهادی، صفحهٔ نخست">
+        <a class="brand" href={url('/')} aria-label="بیت، صفحهٔ نخست">
           <Emblem />
-          <span class="brand-word" aria-hidden="true">گنجور</span>
-          <span class="brand-tag" aria-hidden="true">نسخهٔ پیشنهادی</span>
+          <span class="brand-word" aria-hidden="true">بیت</span>
         </a>
         <nav class="nav" aria-label={"بخش\u200cهای اصلی"}>
           {NAV.map((n) => (
@@ -167,10 +166,10 @@ function Shell() {
       <footer class="site-footer">
         <span class="band" aria-hidden="true" />
         <p>
-          {'این یک نسخهٔ پیشنهادی و غیررسمی PWA برای گنجور است. همهٔ متن\u200cها و داده\u200cها از '}
+          {'بیت برنامه\u200cای مستقل و غیررسمی است و همهٔ متن\u200cها و داده\u200cهایش از داده\u200cهای باز و API عمومی '}
           <a href="https://ganjoor.net" {...EXT}>گنجور (ganjoor.net)</a>
-          {' است. '}
-          <a href={url('/about')}>درباره این طرح</a>
+          {' است. این برنامه را گنجور نساخته و تأیید نکرده است؛ برای پشتیبانی با سازندهٔ آن تماس بگیرید، نه با گنجور. '}
+          <a href={url('/about')}>درباره بیت</a>
         </p>
         <p class="credit-line">
           {'طراحی و ساخت: سپهر رادمرد، '}

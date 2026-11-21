@@ -1,8 +1,10 @@
-# Ganjoor PWA proposal: contract for parallel builders
+# بیت (Beyt): contract for parallel builders
 
-A proposed, unofficial PWA edition of Ganjoor on the public Ganjoor API ("نسخهٔ پیشنهادی PWA برای گنجور"). Own
-hand-made wordmark and emblem, never Ganjoor's logo image; footer and `/about` say it is an unofficial proposal and
-that texts and data come from ganjoor.net (link), plus the creator credit.
+«بیت» is an independent, unofficial Persian-poetry PWA built on Ganjoor's open data and public API. Ganjoor's FAQ asks
+third-party apps to use their own name, so the app never calls itself Ganjoor: «گنجور» appears only as the source of
+texts, meanings and recitations (with a ganjoor.net link). Own hand-made wordmark «بیت» and emblem, never Ganjoor's logo
+image. Footer, `/about` and Settings say it is not made or endorsed by Ganjoor and that support comes from the
+developer, not Ganjoor, plus the creator credit.
 
 ## Stack
 

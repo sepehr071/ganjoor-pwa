@@ -3,12 +3,12 @@ import { Icon } from './Icon.jsx'
 import { APK_URL, canPrompt, isInstalled, isIOS, onInstallChange, promptInstall } from '../lib/install.js'
 
 const T = {
-  title: 'گنجور را نصب کنید',
+  title: 'بیت را نصب کنید',
   lead: 'بی\u200cنیاز از مرورگر، با شعرهای خوانده\u200cشده در حالت آفلاین.',
   install: 'افزودن به دستگاه',
   ios: 'افزودن به صفحهٔ اصلی',
   apk: 'دانلود برای اندروید',
-  apkNote: 'فایل APK · اندروید ۷ به بالا · نسخهٔ ۰.۲',
+  apkNote: 'فایل APK · اندروید ۷ به بالا · نسخهٔ ۰.۳',
   hint: 'برای نصب نسخهٔ وب، در منوی مرورگر گزینهٔ «نصب برنامه» یا «افزودن به صفحهٔ اصلی» را بزنید.',
   iosSteps: ['در Safari دکمهٔ «هم\u200cرسانی» (مربع با فلش رو به بالا) را بزنید.', 'گزینهٔ «Add to Home Screen» یا «افزودن به صفحهٔ اصلی» را انتخاب کنید.', 'دکمهٔ «Add» را بزنید.'],
 }

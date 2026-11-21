@@ -16,10 +16,10 @@
   font-weight: 700;
   font-display: swap;
 }
-/* Noto Nastaliq Urdu (OFL) subset to the letters of the wordmark, about 17 KB: command in README. */
+/* Noto Nastaliq Urdu (OFL) subset to the letters of the wordmark, about 3 KB: command in README. */
 @font-face {
-  font-family: 'Ganjoor Mark';
-  src: url('/fonts/ganjoor-mark.woff2') format('woff2');
+  font-family: 'Beyt Mark';
+  src: url('/fonts/beyt-mark.woff2') format('woff2');
   font-weight: 700;
   font-display: swap;
 }

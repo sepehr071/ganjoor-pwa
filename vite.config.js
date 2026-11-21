@@ -14,9 +14,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png', 'icon.svg', 'fonts/*.ttf', 'fonts/*.woff2'],
       manifest: {
-        name: 'گنجور — نسخهٔ پیشنهادی',
-        short_name: 'گنجور',
-        description: 'نسخهٔ پیشنهادی و غیررسمی PWA برای گنجور: خواندن آرام شعر فارسی با خوانش و معنی. متن\u200cها از گنجور.',
+        name: 'بیت: شعر فارسی بر پایهٔ گنجور',
+        short_name: 'بیت',
+        description: 'برنامهٔ مستقل و غیررسمی خواندن شعر فارسی با خوانش و معنی، ساختهٔ گنجور نیست. متن\u200cها از گنجور.',
         lang: 'fa',
         dir: 'rtl',
         start_url: base,

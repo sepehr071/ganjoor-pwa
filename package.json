@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "A proposed PWA edition of Ganjoor (unofficial): Persian-poetry reader on the public Ganjoor API",
+  "description": "Beyt (بیت): an unofficial Persian-poetry reader built on Ganjoor's open data and public API",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

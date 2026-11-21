@@ -1,6 +1,6 @@
 # Android app (Capacitor)
 
-The same web app wrapped in a native Android shell with Capacitor 8. App id `io.github.sepehr071.ganjoor`, name «گنجور»,
+The same web app wrapped in a native Android shell with Capacitor 8. App id `io.github.sepehr071.ganjoor`, name «بیت» (until v0.2.0 «گنجور»; the id stays so v0.2.0 installs update in place),
 minSdk 24, targetSdk 36. The web build in `dist/` is bundled into the APK and served from `https://localhost`.
 
 ## Build

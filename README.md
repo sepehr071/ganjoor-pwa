@@ -1,11 +1,16 @@
-# گنجور: نسخهٔ پیشنهادی PWA
+# بیت (Beyt)
 
-Live: https://sepehr071.github.io/ganjoor-pwa/ (an unofficial proposal, not affiliated with or endorsed by Ganjoor).
+Live: https://sepehr071.github.io/ganjoor-pwa/ · Android APK: [latest release](https://github.com/sepehr071/ganjoor-pwa/releases/latest)
 
-A proposed PWA edition of [Ganjoor (ganjoor.net)](https://ganjoor.net): an installable, offline-capable reader for
-classical Persian poetry on Ganjoor's public API. Unofficial: it is a proposal to Ganjoor, not made or endorsed by it;
-all poems, meanings, recitations and scans come from Ganjoor and its contributors. `/about` in the app compares it with
-the current site (numbers from `../api-mcp/ganjoor/UI_AUDIT.md`).
+«بیت» is an independent, unofficial, installable and offline-capable reader for classical Persian poetry, built on the
+open data and public API of [Ganjoor (ganjoor.net)](https://ganjoor.net). It is not made, endorsed or supported by
+Ganjoor. All poems, meanings, recitations and scans come from Ganjoor and its contributors. For questions, bugs or
+support, contact the developer (links below), not Ganjoor. `/about` in the app shows how it reads Ganjoor's data
+compared with the site (numbers from `../api-mcp/ganjoor/UI_AUDIT.md`).
+
+Until v0.2.0 the app was called «گنجور — نسخهٔ پیشنهادی». It was renamed in v0.3.0 because
+[Ganjoor's FAQ](https://ganjoor.net/faq) asks third-party apps to use a name of their own. The repo name and the Android
+package id `io.github.sepehr071.ganjoor` stay as they were so links and installs keep working.
 
 Designed and built by Sepehr Radmard ([GitHub](https://github.com/sepehr071),
 [LinkedIn](https://www.linkedin.com/in/sepehr-radmard)).
@@ -35,11 +40,11 @@ mihrab arch) are inline SVG or SVG masks in `src/styles/tokens.css` and `src/com
 
 Fonts (all OFL, self-hosted, no CDN): Vazirmatn for the UI (`public/fonts/OFL.txt`); Noto Nastaliq Urdu
 (`@fontsource/noto-nastaliq-urdu`) for the optional Nastaliq poem text, lazy-loaded when chosen in settings; the
-wordmark uses a 17 KB subset of the same font, made with fontTools:
+wordmark «بیت» uses a 3 KB subset of the same font, made with fontTools:
 
 ```bash
 python -m fontTools.subset node_modules/@fontsource/noto-nastaliq-urdu/files/noto-nastaliq-urdu-arabic-700-normal.woff2 \
-  --text="گنجور" --layout-features='*' --flavor=woff2 --output-file=public/fonts/ganjoor-mark.woff2
+  --text="بیت" --layout-features='*' --flavor=woff2 --output-file=public/fonts/beyt-mark.woff2
 ```
 
 Known limits: audio is not cached offline (i.ganjoor.net mp3s send no CORS headers); very large family trees render
