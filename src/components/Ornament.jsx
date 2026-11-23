@@ -1,16 +1,10 @@
-// Hand-drawn manuscript ornaments. Decorative only (aria-hidden); colours come from CSS (currentColor = gold).
+import { url } from '../lib/base.js'
 
-/** Eight-point star: the brand emblem and the app icon (scripts/make-icons.mjs draws the same shape). */
 export function Emblem({ class: cls = 'brand-emblem' }) {
-  return (
-    <svg class={cls} viewBox="-50 -50 100 100" aria-hidden="true" focusable="false">
-      <path d="M-33-33H33V33H-33ZM0-47 47 0 0 47-47 0Z" fill="var(--gold)" />
-      <path d="M-21-21H21V21H-21ZM0-30 30 0 0 30-30 0Z" fill="var(--bg)" />
-      <circle r="13" fill="var(--accent)" />
-    </svg>
-  )
+  return <img class={cls} src={url('/icons/beyt-192.png')} width="192" height="192" alt="" />
 }
 
+// Hand-drawn manuscript ornaments. Decorative only (aria-hidden); colours come from CSS (currentColor = gold).
 /** Sarlowh: the illuminated head-piece above a title. */
 export function Sarlowh() {
   return (

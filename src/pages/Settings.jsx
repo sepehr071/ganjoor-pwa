@@ -10,9 +10,11 @@ const THEMES = [
   ['dark', 'تیره'],
 ]
 const FONTS = [
-  ['sans', 'ساده'],
+  ['sans', 'وزیرمتن'],
   ['parastoo', 'پرستو'],
   ['markazi', 'مرکزی'],
+  ['estedad', 'استعداد'],
+  ['mikhak', 'میخک'],
   ['nastaliq', 'نستعلیق'],
 ]
 
@@ -41,9 +43,12 @@ export default function Settings() {
         <h2 id="rd">خواندن</h2>
         <div class="stack">
           <p id="pf">خط شعر</p>
-          <div class="segmented" role="group" aria-labelledby="pf">
+          <div class="font-options" role="group" aria-labelledby="pf">
             {FONTS.map(([v, l]) => (
-              <button type="button" key={v} aria-pressed={s.poemFont === v} onClick={() => set({ poemFont: v })}>{l}</button>
+              <button type="button" class="btn" key={v} aria-pressed={s.poemFont === v} onClick={() => set({ poemFont: v })}>
+                {l}
+                {v === DEFAULT_SETTINGS.poemFont && <small>{'پیش\u200cفرض'}</small>}
+              </button>
             ))}
           </div>
           <p class="muted small">{'عنوان\u200cها همیشه نستعلیق\u200cاند؛ این گزینه خط متن شعر را تعیین می\u200cکند.'}</p>

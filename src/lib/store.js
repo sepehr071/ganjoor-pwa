@@ -62,7 +62,7 @@ export function applySettings(s) {
   else r.removeAttribute('data-theme')
   r.style.setProperty('--font-size-poem', s.fontSize + 'px')
   r.style.setProperty('--poem-lh', s.lineHeight)
-  if (['parastoo', 'markazi', 'nastaliq'].includes(s.poemFont)) r.setAttribute('data-poem-font', s.poemFont)
+  if (typeof s.poemFont === 'string') r.setAttribute('data-poem-font', s.poemFont)
   else r.removeAttribute('data-poem-font')
 }
 

@@ -11,7 +11,7 @@ import { usePlayer, play, toggle } from '../lib/player.js'
 import { Icon } from '../components/Icon.jsx'
 import { Arch } from '../components/Arch.jsx'
 import { GetApp } from '../components/GetApp.jsx'
-import { Emblem, Sarlowh, Shamseh } from '../components/Ornament.jsx'
+import { Emblem, Shamseh } from '../components/Ornament.jsx'
 
 const lastPart = (t = '') => t.split('»').pop().trim()
 const playingPoem = (s) => s.poem?.id
@@ -62,37 +62,43 @@ function Hero() {
         <span class="brand-word" aria-hidden="true">بیت</span>
         <a class="round-btn" href={url('/settings')} aria-label="تنظیمات"><Icon name="settings" size={21} /></a>
       </div>
-      <Sarlowh />
-      <h2 id="hero-t" class="hero-title">بیت امروز · {date}</h2>
-      <p class="hero-beyt" aria-hidden={!c || undefined}>
-        {c && <span class="m">{c.a}</span>}
-        {c?.b && <span class="m">{c.b}</span>}
-      </p>
-      <p class="hero-meta">
-        {error ? 'بیت امروز بارگیری نشد.' : c && <span>{t.poet} · {lastPart(t.title)}</span>}
-      </p>
-      <div class="hero-actions">
-        {c && (
-          <>
-            <a class="btn gold" href={url('/poem/' + t.id)}>خواندن شعر</a>
-            {recs.length > 0 && (
-              <button type="button" class="btn primary" onClick={listen}>
-                <Icon name={mine && playing ? 'pause' : 'play'} size={18} fill={!(mine && playing)} />
-                {mine && playing ? 'توقف' : 'گوش دادن'}
-              </button>
+      <div class="hero-spread">
+        <div class="hero-copy">
+          <div class="hero-heading">
+            <h2 id="hero-t" class="hero-title">بیت امروز</h2>
+            <span class="hero-date">{date}</span>
+          </div>
+          <blockquote class="hero-beyt" aria-hidden={!c || undefined}>
+            {c && <span class="m">{c.a}</span>}
+            {c?.b && <span class="m">{c.b}</span>}
+          </blockquote>
+          <p class="hero-meta">
+            {error ? 'بیت امروز بارگیری نشد.' : c && <span>{t.poet} · {lastPart(t.title)}</span>}
+          </p>
+          <div class="hero-actions">
+            {c && (
+              <>
+                <a class="btn gold" href={url('/poem/' + t.id)}>خواندن شعر</a>
+                {recs.length > 0 && (
+                  <button type="button" class="btn primary" onClick={listen}>
+                    <Icon name={mine && playing ? 'pause' : 'play'} size={18} fill={!(mine && playing)} />
+                    {mine && playing ? 'توقف' : 'گوش دادن'}
+                  </button>
+                )}
+                <button type="button" class="round-btn bm" aria-pressed={!!bookmarked} aria-label="نشان کردن بیت امروز"
+                  onClick={() => toggleBookmark({ id: t.id, title: t.title, poet: t.poet, excerpt: coupletText(c).replace('\n', ' / '), at: Date.now() })}>
+                  <Icon name="bookmark" size={20} fill={!!bookmarked} />
+                </button>
+                <button type="button" class="round-btn" aria-label={"هم\u200cرسانی بیت امروز"}
+                  onClick={() => share({ title: t.title, text: `${coupletText(c)}\n— ${t.title}، گنجور`, url: location.origin + url('/poem/' + t.id) })}>
+                  <Icon name="share" size={20} />
+                </button>
+              </>
             )}
-            <button type="button" class="round-btn bm" aria-pressed={!!bookmarked} aria-label="نشان کردن بیت امروز"
-              onClick={() => toggleBookmark({ id: t.id, title: t.title, poet: t.poet, excerpt: coupletText(c).replace('\n', ' / '), at: Date.now() })}>
-              <Icon name="bookmark" size={20} fill={!!bookmarked} />
-            </button>
-            <button type="button" class="round-btn" aria-label={"هم\u200cرسانی بیت امروز"}
-              onClick={() => share({ title: t.title, text: `${coupletText(c)}\n— ${t.title}، گنجور`, url: location.origin + url('/poem/' + t.id) })}>
-              <Icon name="share" size={20} />
-            </button>
-          </>
-        )}
+          </div>
+        </div>
+        <img class="hero-plate" src={url('/art/garden-illustration.webp')} width="1000" height="750" alt="" fetchpriority="high" />
       </div>
-      <span class="band" aria-hidden="true" />
     </section>
   )
 }

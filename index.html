@@ -7,19 +7,19 @@
     <meta name="description" content="بیت، برنامهٔ مستقل و غیررسمی خواندن شعر فارسی بر پایهٔ داده&zwnj;های باز و API عمومی گنجور: خوانش، معنی هر بیت، جستجو بر پایهٔ معنا و خواندن آفلاین. ساختهٔ گنجور نیست." />
     <meta name="theme-color" content="#f4eedf" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0b1330" media="(prefers-color-scheme: dark)" />
-    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="icon" href="/icons/beyt-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/icons/beyt-192.png" />
     <link rel="preload" href="/fonts/Vazirmatn-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/beyt-mark.woff2" as="font" type="font/woff2" crossorigin />
     <script>
-      // Apply saved theme before first paint so there is no flash.
+      // Apply saved reading preferences before first paint.
       try {
         var s = JSON.parse(localStorage.getItem('beyt:settings') || '{}')
         var r = document.documentElement
         if (s.theme === 'light' || s.theme === 'dark') r.setAttribute('data-theme', s.theme)
         if (s.fontSize) r.style.setProperty('--font-size-poem', s.fontSize + 'px')
         if (s.lineHeight) r.style.setProperty('--poem-lh', s.lineHeight)
-        if (s.poemFont === 'nastaliq') r.setAttribute('data-poem-font', 'nastaliq')
+        if (typeof s.poemFont === 'string') r.setAttribute('data-poem-font', s.poemFont)
       } catch (e) {}
     </script>
   </head>

@@ -37,13 +37,13 @@ App code keeps root paths. Internal links go through `url()` from
 `src/lib/base.js`, and the router sees paths with the base stripped.
 
 Stack: Vite, Preact, preact-iso, vite-plugin-pwa (Workbox). Contract between the core app and the explore section:
-`CONTRACT.md`. Icons: `node scripts/make-icons.mjs`.
+`CONTRACT.md`. The PWA uses `public/icons/beyt-*.png` and the home illustration in `public/art/`.
 
 Look: "modern Persian manuscript". Ivory paper and lapis ink (lapis night in dark mode), turquoise for actions, gold
 leaf for rules and ornament only, cinnabar for small highlights. Ornaments (girih band, rosette, sarlowh, shamseh,
 mihrab arch) are inline SVG or SVG masks in `src/styles/tokens.css` and `src/components/Ornament.jsx`.
 
-The poem reader defaults to Vazirmatn (ساده), 23 px, with 1.7 line spacing. Settings also offers Parastoo (پرستو), Markazi Text (مرکزی), and Nastaliq (نستعلیق). The fonts are bundled for offline reading.
+The poem reader defaults to Vazirmatn (وزیرمتن), 23 px, with 1.7 line spacing. Settings also offers Parastoo (پرستو), Markazi Text (مرکزی), Estedad (استعداد), Mikhak (میخک), and Nastaliq (نستعلیق). The fonts are bundled for offline reading.
 
 Fonts (all OFL, self-hosted, no CDN): Vazirmatn for the UI (`public/fonts/OFL.txt`); Noto Nastaliq Urdu
 (`@fontsource/noto-nastaliq-urdu`) for titles and optional Nastaliq poem text, cached for offline use; the

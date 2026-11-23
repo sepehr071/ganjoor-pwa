@@ -25,13 +25,13 @@ export default defineConfig({
         background_color: '#f4eedf',
         theme_color: '#0b1330',
         icons: [
-          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-          { src: 'icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'icons/beyt-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'icons/beyt-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: 'icons/beyt-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png}', 'fonts/*.woff2', 'assets/*arabic*.woff2', 'daily-poems.json'],
+        globPatterns: ['**/*.{js,css,html,svg,png}', 'art/*.webp', 'fonts/*.woff2', 'assets/*arabic*.woff2', 'daily-poems.json'],
         navigateFallback: base + 'index.html',
         cleanupOutdatedCaches: true,
         runtimeCaching: [

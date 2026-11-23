@@ -18,6 +18,16 @@
   font-weight: 700;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Estedad';
+  src: url('/fonts/Estedad-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Mikhak';
+  src: url('/fonts/Mikhak-Regular.woff2') format('woff2');
+  font-display: swap;
+}
 /* Noto Nastaliq Urdu (OFL) subset to the letters of the wordmark, about 3 KB: command in README. */
 @font-face {
   font-family: 'Beyt Mark';
@@ -128,6 +138,8 @@
 
 :root[data-poem-font='parastoo'] { --font-poem: 'Parastoo', var(--font-body); }
 :root[data-poem-font='markazi'] { --font-poem: 'Markazi Text', var(--font-body); }
+:root[data-poem-font='estedad'] { --font-poem: 'Estedad', var(--font-body); }
+:root[data-poem-font='mikhak'] { --font-poem: 'Mikhak', var(--font-body); }
 :root[data-poem-font='nastaliq'] {
   --font-poem: var(--font-display);
 }
