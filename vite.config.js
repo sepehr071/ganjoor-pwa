@@ -31,7 +31,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png}', 'fonts/*.woff2', 'assets/*nastaliq*arabic*.woff2', 'daily-poems.json'],
+        globPatterns: ['**/*.{js,css,html,svg,png}', 'fonts/*.woff2', 'assets/*arabic*.woff2', 'daily-poems.json'],
         navigateFallback: base + 'index.html',
         cleanupOutdatedCaches: true,
         runtimeCaching: [

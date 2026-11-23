@@ -27,14 +27,17 @@ export async function nativeShare({ title, text, url }) {
   } catch {}
 }
 
+export function handleAndroidBack({ canGoBack }) {
+  const sheet = document.activeElement?.closest('dialog[open]') || document.querySelector('dialog[open]')
+  if (sheet) sheet.close()
+  else if (location.pathname !== '/' && canGoBack) history.back()
+  else App.exitApp()
+}
+
 export function initNative() {
   if (!isNative) return
 
-  // Back: history back, exit on home.
-  App.addListener('backButton', ({ canGoBack }) => {
-    if (location.pathname !== '/' && canGoBack) history.back()
-    else App.exitApp()
-  })
+  App.addListener('backButton', handleAndroidBack)
 
   // External links open in the system browser (Custom Tab), never in the app WebView.
   addEventListener(

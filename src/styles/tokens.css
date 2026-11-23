@@ -4,6 +4,8 @@
 /* Noto Nastaliq Urdu (OFL, self-hosted): screen titles, poet names and featured couplets; also the optional poem font. */
 @import '@fontsource/noto-nastaliq-urdu/arabic-400.css';
 @import '@fontsource/noto-nastaliq-urdu/arabic-700.css';
+@import '@fontsource/parastoo/arabic-400.css';
+@import '@fontsource/markazi-text/arabic-400.css';
 @font-face {
   font-family: 'Vazirmatn';
   src: url('/fonts/Vazirmatn-Regular.woff2') format('woff2');
@@ -68,8 +70,8 @@
   --font-body: 'Vazirmatn', system-ui, 'Segoe UI', Tahoma, sans-serif;
   --font-display: 'Nastaliq Digits', 'Noto Nastaliq Urdu', var(--font-body);
   --font-poem: var(--font-body);
-  --font-size-poem: 20px;
-  --poem-lh: 2.1;
+  --font-size-poem: 23px;
+  --poem-lh: 1.7;
   --shadow: 0 1px 2px rgb(24 35 71 / 0.06), 0 10px 30px -12px rgb(24 35 71 / 0.18);
   --nav-h: 4.1rem;
   --header-h: 3.75rem;
@@ -124,7 +126,8 @@
   --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 14px 34px -14px rgb(0 0 0 / 0.6);
 }
 
-/* Nastaliq for poem text, chosen in settings. */
+:root[data-poem-font='parastoo'] { --font-poem: 'Parastoo', var(--font-body); }
+:root[data-poem-font='markazi'] { --font-poem: 'Markazi Text', var(--font-body); }
 :root[data-poem-font='nastaliq'] {
   --font-poem: var(--font-display);
 }

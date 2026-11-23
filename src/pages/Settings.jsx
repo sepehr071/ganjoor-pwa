@@ -10,8 +10,10 @@ const THEMES = [
   ['dark', 'تیره'],
 ]
 const FONTS = [
-  ['nastaliq', 'نستعلیق'],
   ['sans', 'ساده'],
+  ['parastoo', 'پرستو'],
+  ['markazi', 'مرکزی'],
+  ['nastaliq', 'نستعلیق'],
 ]
 
 export default function Settings() {
@@ -64,13 +66,13 @@ export default function Settings() {
       </section>
 
       <section class="stack" aria-labelledby="ab">
-        <h2 id="ab">درباره بیت</h2>
+        <h2 id="ab">دربارهٔ بیت</h2>
         <p>
           {'بیت برنامه\u200cای مستقل و غیررسمی است. همهٔ متن\u200cها، معنی\u200cها و خوانش\u200cها از داده\u200cهای باز '}
           <a href="https://ganjoor.net" target="_blank" rel="noopener noreferrer">گنجور</a>
           {' می\u200cآید و حق آن\u200cها با صاحبانشان است. این برنامه را گنجور نساخته است؛ برای پشتیبانی با سازندهٔ بیت تماس بگیرید، نه با گنجور. هیچ ردیاب یا آمارگیری ندارد و نشان\u200cها، سابقه و تنظیمات فقط در همین دستگاه می\u200cماند.'}
         </p>
-        <p><a href={url('/about')}>{'بیت داده\u200cهای گنجور را چگونه می\u200cخواند'}</a></p>
+        <p><a href={url('/about')}>{'بیشتر دربارهٔ بیت'}</a></p>
       </section>
 
       <GetApp id="get-app-settings" />

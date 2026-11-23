@@ -35,7 +35,7 @@ export const BOOKMARKS = 'beyt:bookmarks'
 export const HISTORY = 'beyt:history'
 export const SETTINGS = 'beyt:settings'
 // Storage keys keep the old "beyt:" prefix so existing bookmarks and settings survive the rename.
-export const DEFAULT_SETTINGS = { theme: 'system', fontSize: 20, lineHeight: 2.1, poemFont: 'sans' }
+export const DEFAULT_SETTINGS = { theme: 'system', fontSize: 23, lineHeight: 1.7, poemFont: 'sans' }
 
 export function toggleBookmark(ref) {
   const list = read(BOOKMARKS, [])
@@ -62,8 +62,7 @@ export function applySettings(s) {
   else r.removeAttribute('data-theme')
   r.style.setProperty('--font-size-poem', s.fontSize + 'px')
   r.style.setProperty('--poem-lh', s.lineHeight)
-  // The nastaliq face is always declared (tokens.css: titles use it); this only switches the poem text.
-  if (s.poemFont === 'nastaliq') r.setAttribute('data-poem-font', 'nastaliq')
+  if (['parastoo', 'markazi', 'nastaliq'].includes(s.poemFont)) r.setAttribute('data-poem-font', s.poemFont)
   else r.removeAttribute('data-poem-font')
 }
 

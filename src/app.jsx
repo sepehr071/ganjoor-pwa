@@ -50,7 +50,7 @@ const exploreMatchers = exploreRoutes.map((r) => [toRegex(r.path), r])
 
 function Shell() {
   const { path, route } = useLocation()
-  const [hub, setHub] = useState(false)
+  const [hub, setHub] = useState(() => Boolean(history.state?.explore))
   const online = useOnline()
   const toastMsg = useToastHost()
   const [settings] = useStored(SETTINGS, DEFAULT_SETTINGS)
@@ -69,7 +69,12 @@ function Shell() {
   widgetRoute.current = route
   useEffect(() => listenWidgetLinks((path) => widgetRoute.current(path)), [])
   useEffect(() => {
-    setHub(false)
+    const syncHub = () => setHub(Boolean(history.state?.explore))
+    addEventListener('popstate', syncHub)
+    return () => removeEventListener('popstate', syncHub)
+  }, [])
+  useEffect(() => {
+    setHub(Boolean(history.state?.explore))
     mainRef.current?.focus({ preventScroll: true })
     const hit = exploreMatchers.find(([re]) => re.test(path))
     if (hit) document.title = pageTitle(hit[1].title)
@@ -100,7 +105,10 @@ function Shell() {
             aria-haspopup="dialog"
             aria-expanded={hub}
             aria-current={onExplore ? 'page' : undefined}
-            onClick={() => setHub(true)}
+            onClick={() => {
+              history.pushState({ ...history.state, explore: true }, '')
+              setHub(true)
+            }}
           >
             <span class="nav-ico"><Icon name="more" size={22} /></span>
             کاوش
@@ -110,7 +118,16 @@ function Shell() {
           <Icon name="settings" size={21} />
         </a>
       </header>
-      <Sheet open={hub} onClose={() => setHub(false)} label="کاوش و بیشتر" class="hub">
+      <Sheet open={hub} onClose={() => {
+        if (hub && history.state?.explore) history.back()
+      }} onNavigate={(href) => {
+        if (href === location.pathname + location.search + location.hash) {
+          history.back()
+          return
+        }
+        setHub(false)
+        route(strip(href), true)
+      }} label="کاوش و بیشتر" class="hub">
         <h2 class="sheet-title">کاوش در ادبیات</h2>
         <ul class="hub-grid">
           {explore.map((r) => (
