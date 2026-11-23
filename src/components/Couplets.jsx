@@ -1,33 +1,59 @@
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { Icon } from './Icon.jsx'
 import { Sheet } from './Sheet.jsx'
 import { copyText, share } from '../lib/hooks.js'
 import { write, COACH } from '../lib/store.js'
 import { coupletText, parseMeaning, toFaDigits } from '../lib/poem.js'
 
+export function LiteraryAnnotations({ items }) {
+  return (
+    <ul class="literary-annotations">
+      {items.map(({ id, name, note, uncertain, source, originRef, parts }) => (
+        <li key={id}>
+          <b>{name}</b>{uncertain && <span class="muted"> (با تردید)</span>}
+          {parts.length > 0 && <p>{parts.map(({ label, value }) => label ? `${label}: ${value}` : value).join('، ')}</p>}
+          {note && <p>{note}</p>}
+          <p class="muted small">
+            منبع آرایه: گنجور
+            {source && /^https?:\/\//i.test(source.url) ? (
+              <>، <a href={source.url} target="_blank" rel="noopener noreferrer">{source.title || source.name}</a>{source.license && <bdi> ({source.license})</bdi>}</>
+            ) : originRef && <>، <bdi>{originRef}</bdi></>}
+          </p>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 /**
  * Poem body. Tap a couplet to open its meaning in a bottom sheet (prev/next beyt, play from here, copy, share);
  * `playing` highlights the couplet being recited. `url` is the poem's address for sharing one beyt.
  */
-export function Couplets({ couplets, playing = -1, onPlayFrom, credit, url }) {
+export function Couplets({ couplets, playing = -1, onPlayFrom, annotations, credit, url }) {
   const [open, setOpen] = useState(-1)
+  const body = useRef(null)
 
   useEffect(() => {
-    if (playing < 0) return
-    const el = document.getElementById('b' + (playing + 1))
+    const el = body.current?.querySelector('.is-playing')
+    if (playing < 0 || open >= 0 || !el || document.querySelector('dialog[open]')) return
+    const { top, bottom } = el.getBoundingClientRect()
+    if (top >= innerHeight * 0.2 && bottom <= innerHeight * 0.7) return
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches
-    el?.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' })
-  }, [playing])
+    el.scrollIntoView({ block: 'center', behavior: calm ? 'instant' : 'smooth' })
+  }, [playing, open])
 
   const n = couplets.length
   const c = couplets[open]
   const m = c && parseMeaning(c.summary)
+  const tags = c && annotations?.get(c.index)
   const text = c && coupletText(c) + (credit ? `\n— ${credit}` : '')
 
   return (
-    <div class="poem-body" lang="fa">
+    <div class="poem-body" ref={body} lang="fa">
       {couplets.map((c, i) => (
-        <div key={c.index} id={'b' + (i + 1)} class={`couplet${open === i ? ' is-open' : ''}${playing === i ? ' is-playing' : ''}`}>
+        <div key={c.index} id={'b' + (i + 1)}
+          aria-current={playing === i ? 'true' : undefined}
+          class={`couplet${open === i ? ' is-open' : ''}${playing === i ? ' is-playing' : ''}`}>
           <button type="button"
             class={`beyt${c.single ? ' single' : ''}`}
             aria-haspopup="dialog"
@@ -67,6 +93,12 @@ export function Couplets({ couplets, playing = -1, onPlayFrom, credit, url }) {
               </div>
             ) : (
               <p class="no-meaning">برای این بیت معنایی ثبت نشده است.</p>
+            )}
+            {!!tags?.length && (
+              <div class="meaning">
+                <h3>آرایه{'\u200c'}های ادبی</h3>
+                <LiteraryAnnotations items={tags} />
+              </div>
             )}
             <div class="sheet-actions">
               {onPlayFrom && (

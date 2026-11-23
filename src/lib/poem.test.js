@@ -7,6 +7,7 @@ import {
   currentCouplet,
   parseMeaning,
   meterOf,
+  sectionMeters,
   toFaDigits,
 } from './poem.js'
 
@@ -82,6 +83,18 @@ describe('misc', () => {
       rhyme: 'انه',
     })
     expect(meterOf({ sections: [] })).toBeNull()
+  })
+  it('keeps distinct section metres and resolves metre references', () => {
+    const metre = { id: 15, rhythm: 'رمل' }
+    expect(sectionMeters({ sections: [
+      { index: 0, ganjoorMetre: metre, rhymeLetters: 'انه', cachedFirstCoupletIndex: 0, coupletsCount: 2 },
+      { index: 1, ganjoorMetreRefSectionIndex: 0, rhymeLetters: 'ار', cachedFirstCoupletIndex: 2, coupletsCount: 1 },
+      { index: 2, ganjoorMetre: { id: 3, rhythm: 'هزج' }, cachedFirstCoupletIndex: 3, coupletsCount: 2 },
+    ] })).toEqual([
+      { id: 15, rhythm: 'رمل', rhyme: 'انه', range: [1, 2] },
+      { id: 15, rhythm: 'رمل', rhyme: 'ار', range: [3, 3] },
+      { id: 3, rhythm: 'هزج', rhyme: null, range: [4, 5] },
+    ])
   })
   it('converts digits', () => expect(toFaDigits(170)).toBe('۱۷۰'))
 })

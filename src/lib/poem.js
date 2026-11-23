@@ -85,6 +85,25 @@ export function meterOf(poem) {
   }
 }
 
+/** Keep the ranges when different sections of one poem have different metres or rhymes. */
+export function sectionMeters(poem) {
+  const sections = poem?.sections || []
+  const byIndex = new Map(sections.map((section) => [section.index, section]))
+  const meters = sections.flatMap((section) => {
+    const metre = section.ganjoorMetre || byIndex.get(section.ganjoorMetreRefSectionIndex)?.ganjoorMetre
+    const rhythm = metre?.rhythm || null
+    const rhyme = section.rhymeLetters || null
+    if (!rhythm && !rhyme) return []
+    const first = section.cachedFirstCoupletIndex
+    const count = section.coupletsCount
+    const range = Number.isInteger(first) && first >= 0 && count > 0 ? [first + 1, first + count] : null
+    return [{ id: metre?.id, rhythm, rhyme, range }]
+  })
+  const unique = new Map(meters.map((m) => [JSON.stringify([m.rhythm, m.rhyme, m.range]), m]))
+  const signatures = new Set(meters.map((m) => JSON.stringify([m.rhythm, m.rhyme])))
+  return signatures.size > 1 ? [...unique.values()] : meters.slice(0, 1)
+}
+
 export const coupletText = (c) => (c.single || !c.b ? c.a : `${c.a}\n${c.b}`)
 
 /** Plain-text share/copy payload for a whole poem. */

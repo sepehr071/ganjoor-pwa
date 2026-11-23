@@ -12,7 +12,7 @@ export default defineConfig({
     preact(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icons/*.png', 'icon.svg', 'fonts/*.ttf', 'fonts/*.woff2'],
+      includeAssets: ['icons/*.png', 'icon.svg', 'fonts/*.woff2'],
       manifest: {
         name: 'بیت: شعر فارسی بر پایهٔ گنجور',
         short_name: 'بیت',
@@ -31,8 +31,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // The nastaliq woff2 (~160 KB) is not precached: it is cached on first use below.
-        globPatterns: ['**/*.{js,css,html,svg,png,ttf}', 'fonts/*.woff2'],
+        globPatterns: ['**/*.{js,css,html,svg,png}', 'fonts/*.woff2', 'assets/*nastaliq*arabic*.woff2', 'daily-poems.json'],
         navigateFallback: base + 'index.html',
         cleanupOutdatedCaches: true,
         runtimeCaching: [

@@ -6,13 +6,13 @@
 @import '@fontsource/noto-nastaliq-urdu/arabic-700.css';
 @font-face {
   font-family: 'Vazirmatn';
-  src: url('/fonts/Vazirmatn-Regular.ttf') format('truetype');
+  src: url('/fonts/Vazirmatn-Regular.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
   font-family: 'Vazirmatn';
-  src: url('/fonts/Vazirmatn-Bold.ttf') format('truetype');
+  src: url('/fonts/Vazirmatn-Bold.woff2') format('woff2');
   font-weight: 700;
   font-display: swap;
 }
@@ -26,14 +26,14 @@
 /* Noto Nastaliq draws digits in Urdu shapes (۴ ۶ ۷); inside Nastaliq text digits come from Vazirmatn instead. */
 @font-face {
   font-family: 'Nastaliq Digits';
-  src: url('/fonts/Vazirmatn-Regular.ttf') format('truetype');
+  src: url('/fonts/Vazirmatn-Regular.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
   unicode-range: U+0030-0039, U+0660-0669, U+06F0-06F9, U+066B-066C;
 }
 @font-face {
   font-family: 'Nastaliq Digits';
-  src: url('/fonts/Vazirmatn-Bold.ttf') format('truetype');
+  src: url('/fonts/Vazirmatn-Bold.woff2') format('woff2');
   font-weight: 700;
   font-display: swap;
   unicode-range: U+0030-0039, U+0660-0669, U+06F0-06F9, U+066B-066C;
@@ -124,7 +124,7 @@
   --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 14px 34px -14px rgb(0 0 0 / 0.6);
 }
 
-/* Nastaliq for poem text, chosen in settings; its font file is lazy-loaded (src/lib/store.js). */
+/* Nastaliq for poem text, chosen in settings. */
 :root[data-poem-font='nastaliq'] {
   --font-poem: var(--font-display);
 }

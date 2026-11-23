@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks'
 import { url } from '../lib/base.js'
-import { get } from '../api.js'
+import { getCategory } from '../api.js'
 import { useAsync, useTitle } from '../lib/hooks.js'
 import { normalize, toFaDigits } from '../lib/poem.js'
 import { Loading, ErrorState, Empty } from '../components/Status.jsx'
@@ -14,7 +14,7 @@ export default function Cat({ id }) {
   const [shown, setShown] = useState(STEP)
   const [q, setQ] = useState('')
   const { data, error, loading, retry } = useAsync(
-    (signal) => get(`/ganjoor/cat/${id}`, { poems: true }, { signal }).then((r) => r.data),
+    (signal) => getCategory(id, { signal }),
     [id],
   )
   const cat = data?.cat

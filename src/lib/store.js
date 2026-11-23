@@ -70,28 +70,66 @@ export function applySettings(s) {
 // ---- IndexedDB: poems saved for offline (full API payload) ----
 const DB = 'beyt'
 const STORE = 'offline-poems'
+const AUDIO = 'offline-audio'
 
 function open() {
   return new Promise((resolve, reject) => {
     if (!('indexedDB' in globalThis)) return reject(new Error('no idb'))
-    const r = indexedDB.open(DB, 1)
-    r.onupgradeneeded = () => r.result.createObjectStore(STORE, { keyPath: 'id' })
-    r.onsuccess = () => resolve(r.result)
+    const r = indexedDB.open(DB, 2)
+    r.onupgradeneeded = ({ oldVersion }) => {
+      if (oldVersion === 0) r.result.createObjectStore(STORE, { keyPath: 'id' })
+      r.result.createObjectStore(AUDIO, { keyPath: ['poemId', 'id'] })
+    }
+    let blocked = false
+    r.onblocked = () => {
+      blocked = true
+      reject(new Error('Close other Beyt tabs to update offline storage'))
+    }
+    r.onsuccess = () => {
+      if (blocked) r.result.close()
+      else {
+        r.result.onversionchange = () => r.result.close()
+        resolve(r.result)
+      }
+    }
     r.onerror = () => reject(r.error)
   })
 }
 
-async function tx(mode, fn) {
+async function tx(mode, fn, stores = [STORE]) {
   const db = await open()
-  return new Promise((resolve, reject) => {
-    const t = db.transaction(STORE, mode)
-    const req = fn(t.objectStore(STORE))
-    t.oncomplete = () => resolve(req?.result)
-    t.onerror = () => reject(t.error)
-  })
+  try {
+    return await new Promise((resolve, reject) => {
+      const t = db.transaction(stores, mode)
+      t.onabort = () => reject(t.error || new Error('Storage transaction aborted'))
+      try {
+        const req = fn(t.objectStore(stores[0]), t)
+        t.oncomplete = () => resolve(req?.result)
+      } catch (error) {
+        t.abort()
+        reject(error)
+      }
+    })
+  } finally {
+    db.close()
+  }
 }
 
 export const savedPoemGet = (id) => tx('readonly', (s) => s.get(Number(id))).catch(() => undefined)
 export const savedPoemPut = (poem) => tx('readwrite', (s) => s.put(poem))
-export const savedPoemDelete = (id) => tx('readwrite', (s) => s.delete(Number(id)))
-export const savedPoemIds = () => tx('readonly', (s) => s.getAllKeys()).catch(() => [])
+const audioKeys = (id) => IDBKeyRange.bound([Number(id)], [Number(id), []])
+export const savedPoemDelete = (id) => tx('readwrite', (s, t) => {
+  t.objectStore(AUDIO).delete(audioKeys(id))
+  return s.delete(Number(id))
+}, [STORE, AUDIO])
+export const savedPoems = () => tx('readonly', (s) => s.getAll()).catch(() => [])
+
+export const savedAudioIds = (poemId) => tx('readonly', (s) => s.getAllKeys(audioKeys(poemId)), [AUDIO])
+  .then((keys) => keys.map(([, id]) => id)).catch(() => [])
+export const savedAudioGet = (poemId, id) => tx('readonly', (s) => s.get([Number(poemId), id]), [AUDIO])
+  .catch(() => undefined)
+export const savedAudioPut = (poem, recitation) => tx('readwrite', (s, t) => {
+  s.put(poem)
+  return t.objectStore(AUDIO).put(recitation)
+}, [STORE, AUDIO])
+export const savedAudioDelete = (poemId, id) => tx('readwrite', (s) => s.delete([Number(poemId), id]), [AUDIO])

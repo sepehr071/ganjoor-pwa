@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import { url } from '../lib/base.js'
 import { Icon } from './Icon.jsx'
 import { Sheet } from './Sheet.jsx'
@@ -26,9 +26,9 @@ export function ReciterList({ recs, current, onPick }) {
   )
 }
 
-function Beyt({ c, class: cls }) {
+function Beyt({ c, class: cls, textRef }) {
   return (
-    <p class={cls}>
+    <p class={cls} ref={textRef}>
       <span class="m">{c.a}</span>
       {c.b && <span class="m">{c.b}</span>}
     </p>
@@ -43,6 +43,9 @@ export function Player() {
   const [recs, setRecs] = useState(false)
   const [bookmarks] = useStored(BOOKMARKS, [])
   const poem = s.poem
+  const cur = Math.max(0, s.couplet)
+  const verseText = useRef(null)
+  const previousVerse = useRef(null)
 
   // Let the page reserve room for the floating mini player (its height plus the gap above the tabs).
   useEffect(() => {
@@ -58,15 +61,28 @@ export function Player() {
   useEffect(() => {
     if (!poem) setFull(false)
   }, [poem])
+  useLayoutEffect(() => {
+    const previous = previousVerse.current
+    previousVerse.current = full ? { id: poem?.id, index: cur } : null
+    if (!full || previous?.id !== poem?.id || previous?.index == null || previous.index === cur ||
+        matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const offset = cur > previous.index ? 12 : -12
+    const animation = verseText.current?.animate?.([
+      { opacity: 0, transform: `translateY(${offset}px)` },
+      { opacity: 1, transform: 'translateY(0)' },
+    ], { duration: 260, easing: 'cubic-bezier(.2, .7, .25, 1)' })
+    return () => animation?.cancel()
+  }, [full, poem?.id, cur])
 
   if (!poem) return null
   const rec = poem.recs[s.recIdx]
   const n = poem.couplets.length
   const title = shortTitle(poem.title)
-  const cur = Math.max(0, s.couplet)
   const pct = s.dur ? Math.min(100, (s.time / s.dur) * 100) : 0
   const beyt = s.couplet >= 0 ? `بیت ${toFaDigits(s.couplet + 1)} از ${toFaDigits(n)}` : ''
   const status = s.error ? 'پخش نشد. اتصال را بررسی کنید.' : s.loading ? 'در حال آماده\u200cسازی' : [rec?.audioArtist, beyt].filter(Boolean).join(' · ')
+  const playbackStatus = s.error || s.loading ? status : s.playing ? 'در حال پخش' : 'توقف پخش'
+  const playLabel = s.error ? 'تلاش دوباره برای پخش' : s.playing ? 'توقف' : 'پخش'
   const bookmarked = bookmarks.some((b) => b.id === poem.id)
   const ref0 = () => ({
     id: poem.id, title: poem.title, poet: poem.poet, at: Date.now(),
@@ -81,7 +97,7 @@ export function Player() {
   return (
     <>
       <section class="mini lapis" ref={ref} aria-label={"پخش\u200cکنندهٔ خوانش"}>
-        <button type="button" class="mini-play" onClick={toggle} aria-label={s.playing ? 'توقف' : 'پخش'}>
+        <button type="button" class="mini-play" onClick={toggle} aria-label={playLabel}>
           <Icon name={s.playing ? 'pause' : 'play'} size={20} fill={!s.playing} />
         </button>
         <button type="button" class="mini-open" aria-haspopup="dialog" aria-expanded={full} aria-label={`باز کردن پخش\u200cکننده، ${title}`} onClick={() => setFull(true)}>
@@ -102,7 +118,7 @@ export function Player() {
             <Icon name="chevron" size={20} class="down" />
           </button>
           <div class="fp-now">
-            <span class="fp-kicker">در حال پخش</span>
+            <span class="fp-kicker" role="status">{playbackStatus}</span>
             <a href={url('/poem/' + poem.id)}>{poem.poet ? `${poem.poet} · ` : ''}{title}</a>
           </div>
           <button type="button" class="round-btn" onClick={stop} aria-label={"توقف و بستن پخش\u200cکننده"}>
@@ -111,15 +127,15 @@ export function Player() {
         </div>
 
         <div class="fp-stage" aria-live="off">
-          {s.couplet > 0 && <Beyt c={poem.couplets[s.couplet - 1]} class="fp-dim before" />}
+          <div class="fp-neighbor">{cur > 0 && <Beyt c={poem.couplets[cur - 1]} class="fp-dim before" />}</div>
           {poem.couplets[cur] && (
             <div class="fp-current">
               <Sarlowh />
-              <Beyt c={poem.couplets[cur]} class="fp-beyt" />
+              <Beyt c={poem.couplets[cur]} class="fp-beyt" textRef={verseText} />
             </div>
           )}
-          {poem.couplets[cur + 1] && <Beyt c={poem.couplets[cur + 1]} class="fp-dim" />}
-          {!s.starts && !s.loading && <p class="fp-note">این خوانش با متن هم{'\u200c'}گام نیست؛ بیت{'\u200c'}ها همراهش جلو نمی{'\u200c'}روند.</p>}
+          <div class="fp-neighbor">{poem.couplets[cur + 1] && <Beyt c={poem.couplets[cur + 1]} class="fp-dim" />}</div>
+          {!s.starts && !s.loading && !s.error && <p class="fp-note">این خوانش با متن هم{'\u200c'}گام نیست؛ بیت{'\u200c'}ها همراهش جلو نمی{'\u200c'}روند.</p>}
         </div>
 
         <div class="fp-controls">
@@ -154,7 +170,7 @@ export function Player() {
             <button type="button" class="fp-btn lg" onClick={() => step(-1)} aria-label={s.starts ? 'بیت قبلی' : 'ده ثانیه عقب'}>
               <Icon name="chevron" size={26} />
             </button>
-            <button type="button" class="fp-play" onClick={toggle} aria-label={s.playing ? 'توقف' : 'پخش'}>
+            <button type="button" class="fp-play" onClick={toggle} aria-label={playLabel}>
               <Icon name={s.playing ? 'pause' : 'play'} size={30} fill={!s.playing} />
             </button>
             <button type="button" class="fp-btn lg" onClick={() => step(1)} aria-label={s.starts ? 'بیت بعدی' : 'ده ثانیه جلو'}>

@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks'
 import { url } from '../lib/base.js'
-import { get, poetImage } from '../api.js'
+import { getPoet, poetImage } from '../api.js'
 import { useAsync, useTitle, share } from '../lib/hooks.js'
 import { compactYears } from '../lib/poets.js'
 import { Arch } from '../components/Arch.jsx'
@@ -13,7 +13,7 @@ const HAFEZ = 2
 
 export default function Poet({ id }) {
   const [more, setMore] = useState(false)
-  const { data, error, loading, retry } = useAsync((signal) => get(`/ganjoor/poet/${id}`, null, { signal }).then((r) => r.data), [id])
+  const { data, error, loading, retry } = useAsync((signal) => getPoet(id, { signal }), [id])
   const poet = data?.poet
   const name = poet?.nickname || poet?.name
   useTitle(name)
@@ -31,11 +31,11 @@ export default function Poet({ id }) {
       </div>
     </div>
   )
-  if (loading || error) {
+  if (loading || error || !poet) {
     return (
       <div class="poet-page">
         {hero}
-        <div class="poet-body wrap">{loading ? <Loading /> : <ErrorState error={error} onRetry={retry} />}</div>
+        <div class="poet-body wrap">{loading ? <Loading /> : error ? <ErrorState error={error} onRetry={retry} /> : <Empty>این شاعر پیدا نشد.</Empty>}</div>
       </div>
     )
   }
@@ -61,6 +61,7 @@ export default function Poet({ id }) {
         </header>
 
         <div class="poet-actions">
+          <a class="btn poet-search" href={url(`/search?poet=${poet.id}`)}><Icon name="search" size={18} />جستجو در آثار</a>
           <a class="btn primary" href={url(`/random?poet=${poet.id}`)}><Icon name="repeat" size={18} />یک شعر از {name}</a>
           {poet.id === HAFEZ ? (
             <a class="btn gold" href={url('/faal')}><Shamseh class="btn-art" />فال حافظ</a>

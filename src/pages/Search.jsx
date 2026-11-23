@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { useLocation } from 'preact-iso'
 import { url } from '../lib/base.js'
-import { searchText, searchMeaning } from '../api.js'
-import { useTitle } from '../lib/hooks.js'
+import { getPoet, searchText, searchMeaning } from '../api.js'
+import { useAsync, useTitle } from '../lib/hooks.js'
 import { normalize, parseMeaning, toFaDigits } from '../lib/poem.js'
 import { Loading, ErrorState, Empty } from '../components/Status.jsx'
 import { Icon } from '../components/Icon.jsx'
@@ -52,14 +52,24 @@ const fromText = (p) => ({
   title: p.title,
 })
 
+const initialResults = { items: [], loading: false, error: null, page: 1, retryPage: 1, hasNext: false, notice: '', done: false }
+
 export default function Search() {
   const { query, route } = useLocation()
   const q = (query.q || '').trim()
-  const mode = query.mode === 'meaning' ? 'meaning' : 'text'
+  const poetId = /^[1-9]\d*$/.test(query.poet || '') && Number.isSafeInteger(Number(query.poet)) ? Number(query.poet) : null
+  const mode = !poetId && query.mode === 'meaning' ? 'meaning' : 'text'
   const [input, setInput] = useState(q)
   const inputRef = useRef(null)
-  const [st, setSt] = useState({ items: [], loading: false, error: null, page: 1, hasNext: false, notice: '', done: false })
-  useTitle(q ? `جستجوی ${q}` : 'جستجو')
+  const requestRef = useRef(null)
+  const [st, setSt] = useState(initialResults)
+  const { data: poetData, loading: poetLoading } = useAsync(
+    (signal) => poetId ? getPoet(poetId, { signal }) : Promise.resolve(null),
+    [poetId],
+  )
+  const poet = !poetLoading && poetData?.poet
+  const heading = poetId ? `جستجو در آثار${poet ? ' ' + (poet.nickname || poet.name) : ' شاعر'}` : 'جستجو'
+  useTitle(q ? `${heading} · ${q}` : heading)
 
   useEffect(() => setInput(q), [q])
   // Arriving without a query (search tab, empty home field): ready to type.
@@ -67,12 +77,18 @@ export default function Search() {
     if (!q) inputRef.current?.focus()
   }, [])
 
-  const run = async (page, signal, forceText) => {
-    setSt((s) => ({ ...s, loading: true, error: null, notice: page === 1 ? '' : s.notice, items: page === 1 ? [] : s.items }))
+  const run = async (page) => {
+    requestRef.current?.abort()
+    const ctrl = new AbortController()
+    requestRef.current = ctrl
+    const { signal } = ctrl
+    setSt((s) => ({ ...(page === 1 ? initialResults : s), loading: true, error: null }))
+    let notice = page === 1 ? '' : st.notice
     try {
-      if (mode === 'meaning' && !forceText) {
+      if (mode === 'meaning' && page === 1) {
         try {
           const j = await searchMeaning(q, 15, { signal })
+          if (signal.aborted) return
           const items = (j.results || []).map((r) => {
             const note = parseMeaning(r.poemSummary)
             const vs = (r.verses || []).slice(0, 2).map((v) => v.text)
@@ -84,50 +100,63 @@ export default function Search() {
               note: note && (note.ai ? 'معنی (هوش مصنوعی): ' : 'معنی: ') + note.text.slice(0, 140) + (note.text.length > 140 ? '…' : ''),
             }
           })
-          return setSt({ items, loading: false, error: null, page: 1, hasNext: false, notice: '', done: true })
+          return setSt({ ...initialResults, items, done: true })
         } catch {
-          if (signal?.aborted) return
-          return run(1, signal, true).then(() => setSt((s) => ({ ...s, notice: 'جستجو بر پایهٔ معنا الان در دسترس نیست. نتیجه\u200cها از جستجوی متنی آمده\u200cاند.' })))
+          if (signal.aborted) return
+          notice = 'جستجو بر پایهٔ معنا در دسترس نیست. نتیجه\u200cهای جستجوی متنی را می\u200cبینید.'
         }
       }
-      const { data, paging } = await searchText(q, page, 20, { signal })
+      const { data, paging, offline } = await searchText(q, page, 20, { signal, poetId })
+      if (signal.aborted) return
+      if (page > 1 && Boolean(offline) !== st.offline) return run(1)
       const items = data.map((p) => ({ ...fromText(p), lines: textSnippet(p.plainText, q) }))
       setSt((s) => ({
         items: page === 1 ? items : [...s.items, ...items],
-        loading: false, error: null, page, hasNext: !!paging?.hasNextPage, notice: forceText ? s.notice : '', done: true,
+        loading: false, error: null, page, retryPage: page, hasNext: !!paging?.hasNextPage,
+        notice: offline ? 'جستجو در شعرهای دانلودشده' : notice, offline: Boolean(offline), done: true,
       }))
     } catch (e) {
-      if (!signal?.aborted) setSt((s) => ({ ...s, loading: false, error: e }))
+      if (!signal.aborted) setSt((s) => ({ ...s, loading: false, error: e, retryPage: page }))
     }
   }
 
   useEffect(() => {
-    if (!q) return setSt({ items: [], loading: false, error: null, page: 1, hasNext: false, notice: '', done: false })
-    const ctrl = new AbortController()
-    run(1, ctrl.signal)
-    return () => ctrl.abort()
-  }, [q, mode])
+    if (q) run(1)
+    else setSt(initialResults)
+    return () => requestRef.current?.abort()
+  }, [q, mode, poetId])
 
-  const go = (nq, nm) => route(`/search?q=${encodeURIComponent(nq)}${nm === 'meaning' ? '&mode=meaning' : ''}`, true)
+  const searchPath = (term, kind, scope = poetId) => {
+    const params = new URLSearchParams()
+    if (scope) params.set('poet', scope)
+    if (term) params.set('q', term)
+    if (!scope && kind === 'meaning') params.set('mode', kind)
+    const search = params.toString()
+    return '/search' + (search ? '?' + search : '')
+  }
+  const go = (nq, nm) => route(searchPath(nq, nm), true)
 
   return (
     <div class="stack-lg">
-      <div class="page-head"><h1 class="display">جستجو</h1></div>
+      <div class="page-head">
+        <h1 class="display">{heading}</h1>
+        {poetId && <p><a href={url(searchPath(q, 'text', null))}>جستجو در آثار همهٔ شاعران</a></p>}
+      </div>
       <form class="search-pill" role="search" onSubmit={(e) => { e.preventDefault(); if (input.trim()) go(input.trim(), mode) }}>
         <Icon name="search" size={20} />
         <label class="sr-only" for="q">عبارت جستجو</label>
         <input id="q" type="search" value={input} onInput={(e) => setInput(e.currentTarget.value)} ref={inputRef}
           placeholder={mode === 'meaning' ? 'مثلاً: دلتنگی برای وطن' : 'واژه یا مصرع…'} enterkeyhint="search" />
       </form>
-      <div class="segmented" role="group" aria-label="نوع جستجو">
+      {!poetId && <div class="segmented" role="group" aria-label="نوع جستجو">
         <button type="button" aria-pressed={mode === 'text'} onClick={() => go(input.trim() || q, 'text')}>در متن</button>
         <button type="button" aria-pressed={mode === 'meaning'} onClick={() => go(input.trim() || q, 'meaning')}>بر پایهٔ معنا</button>
-      </div>
+      </div>}
       {mode === 'meaning' && !q && <p class="muted">حس یا موضوع را بنویسید تا شعرهای نزدیک به آن پیدا شود. بر پایهٔ گنج{'\u200c'}گاه.</p>}
       {st.notice && <p class="offline-banner" role="status" style="border-radius:var(--radius)">{st.notice}</p>}
-      {st.error && <ErrorState error={st.error} onRetry={() => run(st.page, undefined)} />}
+      {st.error && <ErrorState error={st.error} onRetry={() => run(st.retryPage)} />}
       {st.loading && !st.items.length && <Loading label="در حال جستجو" />}
-      {st.done && !st.loading && !st.error && !st.items.length && <Empty>برای «{q}» چیزی پیدا نشد. واژهٔ دیگری امتحان کنید{mode === 'text' ? ' یا جستجو بر پایهٔ معنا را بزنید' : ''}.</Empty>}
+      {st.done && !st.loading && !st.error && !st.items.length && <Empty>برای «{q}» چیزی پیدا نشد. واژهٔ دیگری امتحان کنید{!poetId && mode === 'text' ? ' یا جستجو بر پایهٔ معنا را بزنید' : ''}.</Empty>}
       {st.items.length > 0 && (
         <>
           <p class="muted small" aria-live="polite">{toFaDigits(st.items.length)} نتیجه{st.hasNext ? ' تا اینجا' : ''}</p>
@@ -136,7 +165,7 @@ export default function Search() {
           </ul>
         </>
       )}
-      {st.hasNext && (
+      {st.hasNext && !st.error && (
         <div class="row" style="justify-content:center">
           <button type="button" class="btn" disabled={st.loading} onClick={() => run(st.page + 1)}>نتیجه{'\u200c'}های بیشتر</button>
         </div>

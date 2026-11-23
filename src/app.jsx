@@ -8,7 +8,8 @@ import { Sheet } from './components/Sheet.jsx'
 import { useOnline, useToastHost, pageTitle } from './lib/hooks.js'
 import { useStored, SETTINGS, DEFAULT_SETTINGS, applySettings } from './lib/store.js'
 import { setNavigator } from './lib/player.js'
-import { url, strip } from './lib/base.js'
+import { url, strip, sharedPath } from './lib/base.js'
+import { listenWidgetLinks } from './lib/native.js'
 
 const Home = lazy(() => import('./pages/Home.jsx'))
 const Poets = lazy(() => import('./pages/Poets.jsx'))
@@ -19,6 +20,7 @@ const Search = lazy(() => import('./pages/Search.jsx'))
 const Faal = lazy(() => import('./pages/Faal.jsx'))
 const Random = lazy(() => import('./pages/Random.jsx'))
 const Bookmarks = lazy(() => import('./pages/Bookmarks.jsx'))
+const Offline = lazy(() => import('./pages/Offline.jsx'))
 const History = lazy(() => import('./pages/History.jsx'))
 const Settings = lazy(() => import('./pages/Settings.jsx'))
 const About = lazy(() => import('./pages/About.jsx'))
@@ -34,17 +36,10 @@ const MORE = [
   { href: '/faal', label: 'فال حافظ' },
   { href: '/random', label: 'یک شعر تصادفی' },
   { href: '/history', label: 'خوانده\u200cشده\u200cها' },
+  { href: '/offline', label: 'کتابخانهٔ آفلاین' },
   { href: '/settings', label: 'تنظیمات' },
   { href: '/about', label: 'درباره بیت' },
 ]
-// One line under each explore card in the hub, keyed by the route's icon.
-const NOTES = {
-  meter: 'شعرهای هم\u200cوزن و هم\u200cقافیه',
-  people: 'کسان شاهنامه و خمسه و شجره\u200cشان',
-  museum: 'دیوان\u200cها و چاپ\u200cهای کهن',
-  places: 'جاهایی که در شعرها آمده',
-  literary: 'تشبیه، استعاره و دیگر آرایه\u200cها',
-}
 const explore = exploreRoutes.filter((r) => r.nav)
 // Pages that draw their own top bar on a phone (hero, app bar), so the site header steps aside there.
 const OWN_BAR = /^\/(poet|poem)\/|^\/$/
@@ -70,6 +65,9 @@ function Shell() {
   }, [toastMsg])
   useEffect(() => applySettings({ ...DEFAULT_SETTINGS, ...settings }), [settings])
   useEffect(() => { setNavigator((p) => route(p)) }, [route]) // braces: the returned fn would run as cleanup
+  const widgetRoute = useRef(route)
+  widgetRoute.current = route
+  useEffect(() => listenWidgetLinks((path) => widgetRoute.current(path)), [])
   useEffect(() => {
     setHub(false)
     mainRef.current?.focus({ preventScroll: true })
@@ -120,7 +118,7 @@ function Shell() {
               <a class="hub-card" href={url(r.path)} aria-current={current(r.path) ? 'page' : undefined}>
                 <span class="rosette" aria-hidden="true" />
                 <b>{r.title}</b>
-                {NOTES[r.icon] && <small>{NOTES[r.icon]}</small>}
+                {r.description && <small>{r.description}</small>}
               </a>
             </li>
           ))}
@@ -138,7 +136,7 @@ function Shell() {
       </Sheet>
       {!online && (
         <div class="offline-banner" role="status">
-          آفلاین هستید. شعرهای خوانده{'\u200c'}شده و ذخیره{'\u200c'}شده همچنان در دسترس{'\u200c'}اند.
+          آفلاین هستید. <a href={url('/offline')}>کتابخانهٔ آفلاین</a>
         </div>
       )}
       <main id="main" tabIndex={-1} ref={mainRef} class={bleed ? 'bleed' : path === '/poets' ? 'wide' : path.startsWith('/poem/') || path === '/faal' ? 'read' : ''}>
@@ -153,6 +151,7 @@ function Shell() {
             <Route path="/faal" component={Faal} />
             <Route path="/random" component={Random} />
             <Route path="/bookmarks" component={Bookmarks} />
+            <Route path="/offline" component={Offline} />
             <Route path="/history" component={History} />
             <Route path="/settings" component={Settings} />
             <Route path="/about" component={About} />
@@ -190,7 +189,11 @@ function Shell() {
 // preact-iso has no base option: everything below sees paths without the base, and route() adds it back.
 function BaseLocation({ children }) {
   const loc = useLocation()
-  const value = useMemo(() => ({ ...loc, url: strip(loc.url), path: strip(loc.path), route: (u, replace) => loc.route(url(u), replace) }), [loc])
+  const value = useMemo(() => {
+    const path = strip(loc.path)
+    const resolved = sharedPath(path, loc.query.read)
+    return { ...loc, url: resolved === path ? strip(loc.url) : resolved, path: resolved, route: (u, replace) => loc.route(url(u), replace) }
+  }, [loc])
   return <LocationProvider.ctx.Provider value={value}>{children}</LocationProvider.ctx.Provider>
 }
 

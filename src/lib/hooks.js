@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'preact/hooks'
 import { isNative, nativeShare } from './native.js'
+import { sharedLink } from './base.js'
 
 /** Run an async loader when deps change. Returns {data, error, loading, retry}. The loader gets an AbortSignal. */
 export function useAsync(load, deps) {
@@ -69,6 +70,7 @@ export async function copyText(text) {
 }
 
 export async function share({ title, text, url }) {
+  if (url) url = sharedLink(url, location.origin, isNative)
   if (isNative) return nativeShare({ title, text, url })
   if (navigator.share) {
     try {

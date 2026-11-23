@@ -4,13 +4,17 @@ import { APK_URL, canPrompt, isInstalled, isIOS, onInstallChange, promptInstall 
 
 const T = {
   title: 'بیت را نصب کنید',
-  lead: 'بی\u200cنیاز از مرورگر، با شعرهای خوانده\u200cشده در حالت آفلاین.',
+  lead: 'بیت را از صفحهٔ اصلی دستگاه باز کنید و شعرهای ذخیره\u200cشده را آفلاین بخوانید.',
   install: 'افزودن به دستگاه',
-  ios: 'افزودن به صفحهٔ اصلی',
+  ios: 'راهنمای نصب در آیفون و آیپد',
   apk: 'دانلود برای اندروید',
-  apkNote: 'فایل APK · اندروید ۷ به بالا · نسخهٔ ۰.۳',
+  apkNote: 'فایل APK برای اندروید ۷ به بالا',
   hint: 'برای نصب نسخهٔ وب، در منوی مرورگر گزینهٔ «نصب برنامه» یا «افزودن به صفحهٔ اصلی» را بزنید.',
-  iosSteps: ['در Safari دکمهٔ «هم\u200cرسانی» (مربع با فلش رو به بالا) را بزنید.', 'گزینهٔ «Add to Home Screen» یا «افزودن به صفحهٔ اصلی» را انتخاب کنید.', 'دکمهٔ «Add» را بزنید.'],
+  iosSteps: [
+    'این صفحه را در Safari باز کنید و «هم\u200cرسانی» (مربع با فلش رو به بالا) را بزنید.',
+    'گزینهٔ «Add to Home Screen» را انتخاب کنید. اگر آن را نمی\u200cبینید، «View More» یا «Edit Actions» را بزنید.',
+    'اگر گزینهٔ «Open as Web App» را دیدید، آن را روشن کنید. سپس «Add» را بزنید.',
+  ],
 }
 
 /** Install the web app (browser prompt, or iOS steps) or download the Android APK. Hidden inside an installed app. */
@@ -21,7 +25,7 @@ export function GetApp({ id = 'get-app' }) {
   if (isInstalled()) return null
 
   const prompt = canPrompt()
-  const ios = !prompt && isIOS()
+  const ios = isIOS()
   return (
     <section class="card get-app" aria-labelledby={id}>
       <div class="get-app-head">
@@ -32,7 +36,7 @@ export function GetApp({ id = 'get-app' }) {
         </div>
       </div>
       <div class="get-app-actions">
-        {prompt && (
+        {prompt && !ios && (
           <button type="button" class="btn primary" onClick={promptInstall}>
             <Icon name="plus" size={18} />{T.install}
           </button>
@@ -42,11 +46,13 @@ export function GetApp({ id = 'get-app' }) {
             <Icon name="plus" size={18} />{T.ios}
           </button>
         )}
-        <a class="btn gold" href={APK_URL} rel="noopener">
+        {!ios && <a class="btn gold" href={APK_URL} rel="noopener">
           <Icon name="offline" size={18} />{T.apk}
-        </a>
+        </a>}
       </div>
-      <p class="muted small">{T.apkNote}</p>
+      {!ios && <p class="muted small">
+        {T.apkNote} · در <a href={APK_URL.replace('/download/ganjoor.apk', '')}>{'صفحهٔ انتشار گیت\u200cهاب'}</a>، از بخش <bdi>Assets</bdi> فایل <bdi>ganjoor.apk</bdi> را بگیرید.
+      </p>}
       {ios && steps && (
         <ol class="get-app-steps">
           {T.iosSteps.map((s) => <li key={s}>{s}</li>)}

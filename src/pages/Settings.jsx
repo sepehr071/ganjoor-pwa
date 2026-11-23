@@ -24,6 +24,8 @@ export default function Settings() {
     <div class="stack-lg">
       <div class="page-head"><h1 class="display">تنظیمات</h1></div>
 
+      <p><a class="btn" href={url('/offline')}>کتابخانهٔ آفلاین</a></p>
+
       <section class="stack" aria-labelledby="th">
         <h2 id="th">پوسته</h2>
         <div class="radio-row" role="group" aria-labelledby="th">

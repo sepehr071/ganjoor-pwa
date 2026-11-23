@@ -17,13 +17,13 @@ const Literary = lazy(() => import('./Literary.jsx').then((m) => m.Literary))
 const Words = lazy(() => import('./Words.jsx').then((m) => m.Words))
 
 export const routes = [
-  { path: '/meters', title: 'وزن\u200cها', icon: 'meter', nav: true, component: Meters },
+  { path: '/literary', title: 'آرایه\u200cها', description: 'تشبیه، استعاره و دیگر آرایه\u200cها', icon: 'literary', nav: true, component: Literary },
+  { path: '/meters', title: 'وزن\u200cها', description: 'شعرهای هم\u200cوزن و هم\u200cقافیه', icon: 'meter', nav: true, component: Meters },
   { path: '/meters/:id', title: 'وزن', icon: 'meter', nav: false, component: MeterDetail },
-  { path: '/people', title: 'شخصیت\u200cها', icon: 'people', nav: true, component: People },
+  { path: '/people', title: 'شخصیت\u200cها', description: 'شخصیت\u200cها و شجره\u200cنامهٔ آن\u200cها', icon: 'people', nav: true, component: People },
   { path: '/people/:id', title: 'شخصیت', icon: 'people', nav: false, component: PersonDetail },
-  { path: '/museum', title: 'موزه', icon: 'museum', nav: true, component: Museum },
+  { path: '/museum', title: 'موزه', description: 'نسخه\u200cهای خطی و چاپ\u200cهای کهن', icon: 'museum', nav: true, component: Museum },
   { path: '/museum/:slug', title: 'نسخه', icon: 'museum', nav: false, component: MuseumDetail },
-  { path: '/places', title: 'مکان\u200cها', icon: 'places', nav: true, component: Places },
-  { path: '/literary', title: 'آرایه\u200cها', icon: 'literary', nav: true, component: Literary },
+  { path: '/places', title: 'مکان\u200cها', description: 'جاهایی که در شعرها آمده', icon: 'places', nav: true, component: Places },
   { path: '/words/:catId', title: 'بسامد واژه\u200cها', icon: 'words', nav: false, component: Words },
 ]

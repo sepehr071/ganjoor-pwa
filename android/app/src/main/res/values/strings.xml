@@ -4,4 +4,6 @@
     <string name="title_activity_main">بیت</string>
     <string name="package_name">io.github.sepehr071.ganjoor</string>
     <string name="custom_url_scheme">io.github.sepehr071.ganjoor</string>
+    <string name="daily_widget_title">بیت امروز</string>
+    <string name="daily_widget_open_app">بیت را باز کنید</string>
 </resources>

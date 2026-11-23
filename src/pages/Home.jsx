@@ -1,44 +1,50 @@
+import { useEffect, useState } from 'preact/hooks'
 import { useLocation } from 'preact-iso'
 import { url } from '../lib/base.js'
-import { getPoem, getPoets, getRandomPoem, poetImage } from '../api.js'
+import { routes as exploreRoutes } from '../explore/index.js'
+import { getPoem, getPoets, poetImage } from '../api.js'
 import { useAsync, useTitle, share } from '../lib/hooks.js'
-import { useStored, HISTORY, BOOKMARKS, read, write, toggleBookmark } from '../lib/store.js'
-import { coupletsFromPlain, coupletText, groupCouplets, poetName, toFaDigits } from '../lib/poem.js'
+import { useStored, HISTORY, BOOKMARKS, toggleBookmark } from '../lib/store.js'
+import { coupletText, groupCouplets, poetName, toFaDigits } from '../lib/poem.js'
+import { todayPoem } from '../lib/dailyPoems.js'
 import { usePlayer, play, toggle } from '../lib/player.js'
 import { Icon } from '../components/Icon.jsx'
 import { Arch } from '../components/Arch.jsx'
 import { GetApp } from '../components/GetApp.jsx'
 import { Emblem, Sarlowh, Shamseh } from '../components/Ornament.jsx'
 
-const TODAY = 'beyt:today'
 const lastPart = (t = '') => t.split('»').pop().trim()
-
-// One random poem per calendar day, kept on this device so the hero does not change on every visit.
-async function todayPoem(signal) {
-  const day = new Date().toDateString()
-  const saved = read(TODAY, null)
-  if (saved?.day === day) return saved.poem
-  const p = await getRandomPoem(0, { signal })
-  const couplets = p.verses?.length ? groupCouplets(p.verses) : coupletsFromPlain(p.plainText)
-  const poem = {
-    id: p.id,
-    title: p.fullTitle,
-    poet: p.category?.poet?.nickname || p.fullTitle.split('»')[0].trim(),
-    couplet: couplets[Math.floor(couplets.length / 3)] || couplets[0],
-  }
-  write(TODAY, { day, poem })
-  return poem
-}
+const playingPoem = (s) => s.poem?.id
+const isPlaying = (s) => s.playing
+const explore = exploreRoutes.filter((r) => r.nav)
 
 function Hero() {
-  const { data: t, error } = useAsync(todayPoem, [])
+  const [day, setDay] = useState(() => new Date().toDateString())
+  useEffect(() => {
+    let timer
+    const refresh = () => {
+      clearTimeout(timer)
+      const now = new Date()
+      setDay(now.toDateString())
+      const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+      timer = setTimeout(refresh, midnight.getTime() - now.getTime())
+    }
+    refresh()
+    document.addEventListener('visibilitychange', refresh)
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('visibilitychange', refresh)
+    }
+  }, [])
+  const { data: t, error } = useAsync(() => todayPoem(), [day])
   // The full poem (recitations) is only needed for the listen button.
   const { data: full } = useAsync((signal) => (t ? getPoem(t.id, { signal }) : Promise.resolve(null)), [t?.id])
   const [bookmarks] = useStored(BOOKMARKS, [])
-  const player = usePlayer()
+  const playerPoem = usePlayer(playingPoem)
+  const playing = usePlayer(isPlaying)
   const c = t?.couplet
   const recs = (full?.recitations || []).filter((r) => r.mp3Url)
-  const mine = t && player.poem?.id === t.id
+  const mine = t && playerPoem === t.id
   const date = new Intl.DateTimeFormat('fa-IR', { day: 'numeric', month: 'long' }).format(new Date())
   const bookmarked = t && bookmarks.some((b) => b.id === t.id)
 
@@ -58,22 +64,21 @@ function Hero() {
       </div>
       <Sarlowh />
       <h2 id="hero-t" class="hero-title">بیت امروز · {date}</h2>
-      {error && <p class="hero-meta">بیت امروز بارگیری نشد. اتصال را بررسی کنید و صفحه را دوباره باز کنید.</p>}
-      {!error && !c && <p class="hero-beyt" aria-hidden="true" />}
-      {c && (
-        <>
-          <p class="hero-beyt">
-            <span class="m">{c.a}</span>
-            {c.b && <span class="m">{c.b}</span>}
-          </p>
-          <p class="hero-meta">
-            <a href={url('/poem/' + t.id)}>{t.poet} · {lastPart(t.title)}</a>
-          </p>
-          <div class="hero-actions">
+      <p class="hero-beyt" aria-hidden={!c || undefined}>
+        {c && <span class="m">{c.a}</span>}
+        {c?.b && <span class="m">{c.b}</span>}
+      </p>
+      <p class="hero-meta">
+        {error ? 'بیت امروز بارگیری نشد.' : c && <span>{t.poet} · {lastPart(t.title)}</span>}
+      </p>
+      <div class="hero-actions">
+        {c && (
+          <>
+            <a class="btn gold" href={url('/poem/' + t.id)}>خواندن شعر</a>
             {recs.length > 0 && (
               <button type="button" class="btn primary" onClick={listen}>
-                <Icon name={mine && player.playing ? 'pause' : 'play'} size={18} fill={!(mine && player.playing)} />
-                {mine && player.playing ? 'توقف' : 'گوش دادن'}
+                <Icon name={mine && playing ? 'pause' : 'play'} size={18} fill={!(mine && playing)} />
+                {mine && playing ? 'توقف' : 'گوش دادن'}
               </button>
             )}
             <button type="button" class="round-btn bm" aria-pressed={!!bookmarked} aria-label="نشان کردن بیت امروز"
@@ -84,9 +89,9 @@ function Hero() {
               onClick={() => share({ title: t.title, text: `${coupletText(c)}\n— ${t.title}، گنجور`, url: location.origin + url('/poem/' + t.id) })}>
               <Icon name="share" size={20} />
             </button>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
       <span class="band" aria-hidden="true" />
     </section>
   )
@@ -134,10 +139,11 @@ export default function Home() {
         >
           <Icon name="search" size={20} />
           <label class="sr-only" for="home-q">جستجو در شعرها</label>
-          <input id="home-q" name="q" type="search" placeholder="یک واژه، یک حس، یک مصرع…" enterkeyhint="search" />
+          <input id="home-q" name="q" type="search" placeholder="جستجو در شعرها" enterkeyhint="search" />
         </form>
 
         <nav class="quick" aria-label="شروع سریع">
+          <a class="btn browse-poets" href={url('/poets')}><Icon name="poets" size={20} />مرور شاعران و آثارشان</a>
           <a class="rich faal" href={url('/faal')}>
             <Shamseh class="rich-art" />
             <b>فال حافظ</b>
@@ -159,6 +165,21 @@ export default function Home() {
             <ContinueCard h={history[0]} />
           </section>
         )}
+
+        <section class="home-explore" aria-labelledby="home-explore-h">
+          <div class="section-title"><h2 id="home-explore-h">کاوش در ادبیات</h2></div>
+          <ul class="hub-grid">
+            {explore.map(({ path, title, description }) => (
+              <li key={path}>
+                <a class="hub-card" href={url(path)}>
+                  <span class="rosette" aria-hidden="true" />
+                  <b>{title}</b>
+                  <small>{description}</small>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section aria-labelledby="poets-h">
           <div class="section-title">

@@ -7,6 +7,19 @@ import { StatusBar, Style } from '@capacitor/status-bar'
 
 export const isNative = Capacitor.isNativePlatform()
 
+export function listenWidgetLinks(route) {
+  if (!isNative) return
+  let active = true
+  const listener = App.addListener('appUrlOpen', ({ url }) => {
+    const match = /^beyt:\/\/poem\/([1-9]\d*)$/.exec(url)
+    if (active && match) route(`/poem/${match[1]}`)
+  })
+  return () => {
+    active = false
+    listener.then((handle) => handle.remove())
+  }
+}
+
 /** WebView has no Web Share. A https://localhost link is useless to others, so it is dropped (the text carries the ganjoor.net source). */
 export async function nativeShare({ title, text, url }) {
   try {

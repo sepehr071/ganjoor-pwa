@@ -312,6 +312,16 @@ select.field { border-radius: var(--radius-sm); }
 .list-item-actions { display: flex; align-items: center; }
 .poem-list li { content-visibility: auto; contain-intrinsic-size: auto 64px; }
 
+.saved-library .segmented { display: flex; }
+.saved-library .segmented button { flex: 1; padding-inline: 0.6rem; }
+.saved-count { margin-inline-start: 0.25em; font-size: 0.85em; font-variant-numeric: tabular-nums; }
+.saved-library .search-pill { box-shadow: none; }
+.saved-library .status > svg { color: var(--accent); margin-block-end: 0.55rem; }
+.saved-library .saved-list { margin-block-start: var(--space-3); }
+.saved-list li { contain-intrinsic-size: auto 105px; }
+.saved-list .list-item-actions { gap: var(--space-1); }
+.saved-excerpt { margin-block-start: 0.35rem; color: var(--text); font-size: 0.94rem; overflow-wrap: anywhere; }
+
 /* poet portrait in a mihrab arch with a thin gold rule; the initial shows until the image loads */
 .arch {
   display: block; flex: none; width: 4.5rem; aspect-ratio: 5 / 6; padding: 2px; background: var(--gold); container-type: inline-size;
@@ -368,6 +378,8 @@ select.field { border-radius: var(--radius-sm); }
 .folio-meta .chip { min-height: 32px; font-size: 0.8rem; padding-inline: 0.75rem; }
 .folio-meta a.chip { font-weight: 700; min-height: 44px; }
 .listen { margin-top: var(--space-2); }
+.poem-audio-actions { justify-content: center; margin-top: var(--space-2); }
+.poem-audio-actions .listen { margin-top: 0; }
 /* the hint shows once, as a coach mark pointing at the first beyt */
 .coach {
   position: relative; margin: var(--space-3) auto 0.5rem; width: fit-content; max-width: 100%;
@@ -493,6 +505,9 @@ details.summary p { padding-bottom: var(--space-4); }
 .quote .m + .m { text-align: end; }
 .meaning h3 { font-size: 0.82rem; color: var(--accent); }
 .meaning p { font-size: 0.97rem; line-height: 2; text-wrap: pretty; }
+.literary-annotations { list-style: none; margin: 0; padding: 0; }
+.literary-annotations li + li { border-block-start: 1px solid var(--border); margin-block-start: var(--space-2); padding-block-start: var(--space-2); }
+.literary-annotations p.small { font-size: 0.8rem; }
 
 /* explore hub */
 .hub-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 10px; }
@@ -504,6 +519,15 @@ details.summary p { padding-bottom: var(--space-4); }
 .hub-card small { color: var(--text-muted); font-size: 0.78rem; line-height: 1.6; }
 .hub-card:hover, .hub-card[aria-current='page'] { border-color: var(--accent); }
 .hub-card:active { transform: scale(0.97); }
+.home-explore .hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.home-explore .hub-grid > :first-child { grid-column: span 2; }
+.home-explore .hub-grid > :first-child .hub-card {
+  background: var(--surface); border-color: color-mix(in srgb, var(--gold) 45%, var(--border));
+}
+.home-explore .hub-grid > :first-child .hub-card:hover { border-color: var(--accent); }
+@media (min-width: 48rem) {
+  .home-explore .hub-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 
 /* ---------- home ---------- */
 .hero { text-align: center; padding: calc(env(safe-area-inset-top, 0px) + 14px) var(--space-4) 58px; }
@@ -519,10 +543,10 @@ details.summary p { padding-bottom: var(--space-4); }
 }
 .hero-beyt .m { display: block; text-align: start; white-space: nowrap; }
 .hero-beyt .m + .m { text-align: end; }
-.hero-meta { margin-top: 4px; font-size: 0.85rem; color: var(--text-muted); }
+.hero-meta { margin-top: 4px; min-block-size: 32px; font-size: 0.85rem; color: var(--text-muted); }
 .hero-meta a { color: inherit; display: inline-flex; align-items: center; min-height: 32px; }
 .hero-meta a:hover { color: var(--text); }
-.hero-actions { display: flex; justify-content: center; gap: 10px; margin-top: 16px; }
+.hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 16px; min-block-size: 44px; }
 .hero-actions .btn.primary { padding-inline: 18px; }
 .hero > .band { position: absolute; inset-inline: 0; bottom: 36px; opacity: 0.55; }
 .home-body {
@@ -530,6 +554,7 @@ details.summary p { padding-bottom: var(--space-4); }
 }
 .home-body.stack-lg > * + * { margin-top: 22px; }
 .quick { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.quick .browse-poets, .poet-actions .poet-search { grid-column: 1 / -1; }
 .rich {
   position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;
   min-height: 128px; padding: 14px 16px; border-radius: 20px; color: var(--text); text-decoration: none; transition: transform 0.15s;
@@ -700,6 +725,7 @@ details.summary p { padding-bottom: var(--space-4); }
 .fp-stage { flex: 1; display: grid; align-content: center; gap: 14px; padding: 20px 24px; text-align: center; }
 .fp-stage .m { display: block; text-align: start; }
 .fp-stage .m + .m { text-align: end; }
+.fp-neighbor { min-block-size: 3.76rem; }
 .fp-dim { font-size: 0.94rem; line-height: 2; opacity: 0.55; }
 .fp-dim.before { opacity: 0.38; }
 .fp-current {
@@ -708,7 +734,7 @@ details.summary p { padding-bottom: var(--space-4); }
 }
 .fp-current .sarlowh { width: 120px; margin-bottom: 4px; }
 .fp-beyt { font-family: var(--font-display); font-size: min(1.31rem, 5vw); line-height: 2.6; }
-.fp-beyt .m { white-space: nowrap; }
+.fp-beyt, .fp-dim { overflow-wrap: anywhere; }
 .fp-note { font-size: 0.8rem; color: var(--text-muted); }
 .fp-controls { display: grid; gap: 18px; padding: 0 24px; }
 .fp-rec { display: flex; align-items: center; gap: 10px; }

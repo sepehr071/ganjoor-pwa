@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/daily_poem_widget_background"
+    android:gravity="center"
+    android:layoutDirection="rtl"
+    android:orientation="vertical"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="6dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="@string/daily_widget_title"
+        android:textColor="#F1DCA1"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/daily_widget_couplet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="3"
+        android:text="@string/daily_widget_open_app"
+        android:textColor="#F4EEDF"
+        android:textDirection="rtl"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/daily_widget_poet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="#F1DCA1"
+        android:textDirection="rtl"
+        android:textSize="12sp"
+        android:visibility="gone" />
+</LinearLayout>
