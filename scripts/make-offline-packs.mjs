@@ -80,9 +80,10 @@ export async function packLibrary(root, output, expected = EXPECTED_POEMS) {
     if (!pack) continue
     const { id, name, nickname, pinOrder } = pack.poet
     const file = `${SNAPSHOT}-${id}.json.gz`
-    const bytes = gzipSync(JSON.stringify(pack))
+    const payload = Buffer.from(JSON.stringify(pack))
+    const bytes = gzipSync(payload)
     await writeFile(join(output, file), bytes)
-    packs.push({ id, name: nickname || name, pinOrder, file, bytes: bytes.byteLength, poems: pack.poems.length })
+    packs.push({ id, name: nickname || name, pinOrder, file, bytes: bytes.byteLength, decodedBytes: payload.byteLength, poems: pack.poems.length })
     count += pack.poems.length
     if (packs.length % 25 === 0) console.log(`${packs.length} poet packs written`)
   }

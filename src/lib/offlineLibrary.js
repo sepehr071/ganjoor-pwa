@@ -81,11 +81,12 @@ export const installedPacks = () => readStore('packs', 'getAll')
 
 export async function offlineManifest(signal) {
   const response = await fetch(MANIFEST, { signal, cache: 'no-cache' })
-  if (!response.ok) throw new Error(`Offline catalog HTTP ${response.status}`)
+  if (!response.ok) throw Object.assign(new Error(`Offline catalog HTTP ${response.status}`), { status: response.status })
   const manifest = await response.json()
   if (manifest.schema !== SCHEMA || typeof manifest.version !== 'string' || !Array.isArray(manifest.packs)
     || !manifest.packs.length || manifest.packs.some((p) => !Number.isSafeInteger(p.id) || p.id <= 0
       || typeof p.name !== 'string' || !/^[\w.-]+\.json\.gz$/.test(p.file)
+      || (p.decodedBytes != null && (!Number.isSafeInteger(p.decodedBytes) || p.decodedBytes <= 0))
       || !Number.isSafeInteger(p.bytes) || p.bytes <= 0 || !Number.isSafeInteger(p.poems) || p.poems <= 0)) {
     throw new Error('Invalid offline catalog')
   }
@@ -126,20 +127,21 @@ function savePack(info, version, { poet, cats, poems }, signal) {
   }, signal)
 }
 
-export async function downloadOfflinePack(manifest, pack, { signal, onProgress } = {}) {
+export async function downloadOfflinePack(manifest, pack, { signal, onProgress, onSaving } = {}) {
   const response = await fetch(new URL(pack.file, manifest.url), { signal })
   if (!response.ok || !response.body) throw new Error(`Offline pack HTTP ${response.status}`)
+  const decoded = response.headers.get('Content-Encoding')?.toLowerCase() === 'gzip'
+  const total = decoded ? pack.decodedBytes : pack.bytes
   let received = 0
   const bytes = response.body.pipeThrough(new TransformStream({
     transform(chunk, controller) {
       received += chunk.byteLength
-      onProgress?.(Math.min(received, pack.bytes))
+      if (total) onProgress?.(Math.floor(Math.min(received / total, 1) * pack.bytes))
       controller.enqueue(chunk)
     },
   }))
   // Static hosts usually serve .gz files as bytes. Honor HTTP decoding when the host supplies it.
-  const body = response.headers.get('Content-Encoding')?.toLowerCase() === 'gzip'
-    ? bytes : bytes.pipeThrough(new DecompressionStream('gzip'))
+  const body = decoded ? bytes : bytes.pipeThrough(new DecompressionStream('gzip'))
   const data = await new Response(body).json()
   if (signal?.aborted) throw signal.reason
   const catIds = new Set(data.cats?.map((c) => c.id))
@@ -147,6 +149,7 @@ export async function downloadOfflinePack(manifest, pack, { signal, onProgress }
     || data.poems.some((p) => p.poetId !== pack.id || !catIds.has(p.catId))) {
     throw new Error('Offline pack does not match its catalog entry')
   }
+  onSaving?.()
   await savePack(pack, manifest.version, data, signal)
 }
 

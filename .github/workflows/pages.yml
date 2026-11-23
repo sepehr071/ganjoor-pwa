@@ -28,6 +28,17 @@ jobs:
       - run: npm run build
         env:
           BASE_PATH: /ganjoor-pwa/
+      - name: Build offline poet packs
+        run: |
+          corpus="$RUNNER_TEMP/ganjoor-v2026.1.tar.zst"
+          source="$RUNNER_TEMP/ganjoor-v2026.1"
+          curl --fail --location --retry 3 --max-time 420 \
+            https://github.com/sajad2025/ganjoor/releases/download/v2026.1/ganjoor-data.tar.zst \
+            --output "$corpus"
+          printf '%s  %s\n' 'ebc83dc9bc5d81bb8574034ffd6104e6d3bdf7ecdeaf15da6309e6890567fe56' "$corpus" | sha256sum --check
+          mkdir -p "$source"
+          tar -xf "$corpus" -C "$source"
+          node scripts/make-offline-packs.mjs "$source" dist/offline-packs
       # SPA deep links: Pages serves 404.html for unknown paths, so it must be the app.
       - run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v5

@@ -160,7 +160,6 @@ main.bleed { max-width: none; padding-inline: 0; padding-top: 0; }
 .site-footer p + p { margin-top: var(--space-2); }
 .site-footer a { color: inherit; display: inline-block; min-height: 24px; }
 .site-footer .credit-line { color: var(--text); }
-.site-footer .en { text-align: right; margin-top: 0; }
 
 @media (max-width: 47.99rem) {
   /* home, poet and poem draw their own top bar on a phone; the tab bar (inside the header) stays */
@@ -321,6 +320,17 @@ select.field { border-radius: var(--radius-sm); }
 .saved-list li { contain-intrinsic-size: auto 105px; }
 .saved-list .list-item-actions { gap: var(--space-1); }
 .saved-excerpt { margin-block-start: 0.35rem; color: var(--text); font-size: 0.94rem; overflow-wrap: anywhere; }
+
+.download-progress { display: grid; gap: var(--space-2); border-color: var(--accent); }
+.offline-library .download-progress {
+  position: sticky; top: calc(var(--header-h) + env(safe-area-inset-top, 0px) + 0.5rem); z-index: 3;
+}
+.download-progress-head, .download-progress-meta { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); }
+.download-progress-head strong { flex: 1; }
+.download-progress-meta .btn { margin-inline-start: auto; }
+.download-percent { color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; }
+.download-progress progress, .recitation-progress progress { inline-size: 100%; block-size: 0.8rem; accent-color: var(--accent); }
+.recitation-progress { display: grid; gap: var(--space-1); padding: 0 var(--space-3) var(--space-3); }
 
 /* poet portrait in a mihrab arch with a thin gold rule; the initial shows until the image loads */
 .arch {

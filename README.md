@@ -62,6 +62,7 @@ size. Recitations are downloaded individually from the reader.
 For a web or staging build with downloads, extract the pinned [Ganjoor v2026.1 corpus](https://github.com/sajad2025/ganjoor/releases/tag/v2026.1)
 after checking the archive against `SHA256SUMS`. Run `npm run build`, then run
 `node scripts/make-offline-packs.mjs <extracted-root> dist/offline-packs`. Serve that directory alongside the web build.
+The GitHub Pages workflow verifies the pinned archive and generates these packs after the web build.
 For an Android staging build, set `VITE_OFFLINE_CATALOG_URL` to the staging HTTPS manifest URL before the web build.
 
 The daily verse collection uses classical Persian poetry from Ganjoor (Hamid Reza Mohammadi and contributors),

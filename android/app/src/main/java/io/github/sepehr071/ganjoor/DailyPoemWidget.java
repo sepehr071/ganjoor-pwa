@@ -37,7 +37,7 @@ public class DailyPoemWidget extends AppWidgetProvider {
             int poemId = poem.getInt("id");
             views.setTextViewText(R.id.daily_widget_couplet, text);
             views.setTextViewText(R.id.daily_widget_poet, poet);
-            views.setViewVisibility(R.id.daily_widget_poet, View.VISIBLE);
+            views.setViewVisibility(R.id.daily_widget_footer, View.VISIBLE);
             intent.setAction(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("beyt://poem/" + poemId));
         } catch (IOException | JSONException error) {

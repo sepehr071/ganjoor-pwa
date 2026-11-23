@@ -56,11 +56,13 @@ export default function Offline() {
     const total = totalBytes(entries)
     let completed = 0
     try {
-      for (const entry of entries) {
-        setJob({ name: entry.name, received: completed, total })
+      for (const [index, entry] of entries.entries()) {
+        const current = { name: entry.name, received: completed, total, position: index + 1, count: entries.length }
+        setJob(current)
         await downloadOfflinePack(catalog, entry, {
           signal: controller.signal,
-          onProgress: (received) => setJob({ name: entry.name, received: completed + received, total }),
+          onProgress: (received) => setJob({ ...current, received: current.received + received }),
+          onSaving: () => setJob({ ...current, received: current.received + entry.bytes, saving: true }),
         })
         completed += entry.bytes
         setInstalled(await installedPacks())
@@ -98,7 +100,7 @@ export default function Offline() {
   }
 
   return (
-    <div class="stack-lg">
+    <div class="offline-library stack-lg">
       <header class="page-head">
         <h1 class="display">کتابخانهٔ آفلاین</h1>
         <p>متن شعرها را یک بار بگیرید و بعد بدون اینترنت بخوانید یا در آن{'\u200c'}ها جستجو کنید.</p>
@@ -111,17 +113,25 @@ export default function Offline() {
         </div>
       )}
       {job?.total && (
-        <div class="card stack" aria-label="پیشرفت دریافت" role="group">
-          <p role="status">در حال دریافت آثار {job.name}</p>
-          <progress aria-label={'حجم دریافت\u200cشده'} value={job.received} max={job.total} />
-          <span class="small muted">{sizeLabel(job.received)} از {sizeLabel(job.total)}</span>
-          <div><button type="button" class="btn" onClick={() => active.current?.abort()}>توقف دریافت</button></div>
+        <div class="card download-progress" aria-label="پیشرفت دریافت" role="group">
+          <div class="download-progress-head">
+            <strong role="status">{job.saving ? 'در حال ذخیرهٔ آثار' : 'در حال دریافت آثار'} {job.name}</strong>
+            <span class="download-percent">{toFaDigits(Math.floor(100 * job.received / job.total))}٪</span>
+          </div>
+          <progress aria-label="پیشرفت دریافت مجموعه" value={job.received} max={job.total} />
+          <div class="download-progress-meta">
+            <span class="small muted">{sizeLabel(job.received)} از {sizeLabel(job.total)}</span>
+            {job.count > 1 && <span class="small muted">مجموعهٔ {toFaDigits(job.position)} از {toFaDigits(job.count)}</span>}
+            <button type="button" class="btn link" onClick={() => active.current?.abort()}>توقف دریافت</button>
+          </div>
         </div>
       )}
       {notice && <p role={failed ? 'alert' : 'status'}>{notice}</p>}
       {error && (
         <div class="status error" role="alert">
-          <p>فهرست دانلود در دسترس نیست. اتصال اینترنت را بررسی کنید.</p>
+          <p>{error.status === 404 || error.status === 410
+            ? 'فهرست شعرها هنوز روی سرور در دسترس نیست. بعداً دوباره تلاش کنید.'
+            : 'فهرست شعرها بارگیری نشد. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.'}</p>
           <button type="button" class="btn" onClick={retry}>تلاش دوباره</button>
         </div>
       )}

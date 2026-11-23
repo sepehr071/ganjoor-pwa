@@ -165,10 +165,10 @@ function Shell() {
       <footer class="site-footer">
         <span class="band" aria-hidden="true" />
         <p>
-          {'بیت برنامه\u200cای مستقل و غیررسمی است و همهٔ متن\u200cها و داده\u200cهایش از داده\u200cهای باز و API عمومی '}
-          <a href="https://ganjoor.net" {...EXT}>گنجور (ganjoor.net)</a>
-          {' است. این برنامه را گنجور نساخته و تأیید نکرده است؛ برای پشتیبانی با سازندهٔ آن تماس بگیرید، نه با گنجور. '}
-          <a href={url('/about')}>درباره بیت</a>
+          {'بیت برنامه\u200cای مستقل برای خواندن شعر فارسی است. متن شعرها، معنی\u200cها و خوانش\u200cها از '}
+          <a href="https://ganjoor.net" {...EXT}>گنجور</a>
+          {' می\u200cآیند. '}
+          <a href={url('/about')}>دربارهٔ بیت</a>
         </p>
         <p class="credit-line">
           {'طراحی و ساخت: سپهر رادمرد، '}
@@ -176,8 +176,6 @@ function Shell() {
           {'، '}
           <a href="https://www.linkedin.com/in/sepehr-radmard" {...EXT}>LinkedIn</a>
         </p>
-        <p lang="en" dir="ltr" class="small en">Designed and built by Sepehr Radmard</p>
-        <p>{'بدون ردیاب و بدون آمارگیر. نشان\u200cها و تنظیمات فقط در همین دستگاه می\u200cمانند.'}</p>
       </footer>
       <Player />
       {/* a manual popover: top layer, so it also shows above an open sheet */}

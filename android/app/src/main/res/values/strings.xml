@@ -6,4 +6,5 @@
     <string name="custom_url_scheme">io.github.sepehr071.ganjoor</string>
     <string name="daily_widget_title">بیت امروز</string>
     <string name="daily_widget_open_app">بیت را باز کنید</string>
+    <string name="daily_widget_read_poem">خواندن شعر</string>
 </resources>

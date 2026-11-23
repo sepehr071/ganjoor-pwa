@@ -4,42 +4,77 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/daily_poem_widget_background"
-    android:gravity="center"
     android:layoutDirection="rtl"
     android:orientation="vertical"
-    android:paddingHorizontal="12dp"
-    android:paddingVertical="6dp">
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/daily_widget_title"
-        android:textColor="#F1DCA1"
-        android:textSize="12sp" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:importantForAccessibility="no"
+            android:src="@mipmap/ic_launcher_round" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:maxLines="1"
+            android:text="@string/daily_widget_title"
+            android:textColor="#EFD393"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/daily_widget_couplet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:ellipsize="end"
         android:gravity="center"
-        android:maxLines="3"
+        android:lineSpacingExtra="2dp"
+        android:maxLines="4"
         android:text="@string/daily_widget_open_app"
         android:textColor="#F4EEDF"
         android:textDirection="rtl"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/daily_widget_poet"
+    <LinearLayout
+        android:id="@+id/daily_widget_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:textColor="#F1DCA1"
-        android:textDirection="rtl"
-        android:textSize="12sp"
-        android:visibility="gone" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/daily_widget_poet"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#DBCBA7"
+            android:textDirection="rtl"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:maxLines="1"
+            android:text="@string/daily_widget_read_poem"
+            android:textColor="#80DBCF"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 </LinearLayout>
