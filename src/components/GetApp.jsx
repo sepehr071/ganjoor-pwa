@@ -9,6 +9,7 @@ const T = {
   ios: 'راهنمای نصب در آیفون و آیپد',
   apk: 'دانلود برای اندروید',
   apkNote: 'فایل APK برای اندروید ۷ به بالا',
+  apkStorage: 'نشان\u200cها، سابقهٔ خواندن، تنظیمات و دانلودهای آفلاین در نسخهٔ وب و برنامهٔ اندروید جداگانه ذخیره می\u200cشوند.',
   hint: 'برای نصب نسخهٔ وب، در منوی مرورگر گزینهٔ «نصب برنامه» یا «افزودن به صفحهٔ اصلی» را بزنید.',
   iosSteps: [
     'این صفحه را در Safari باز کنید و «هم\u200cرسانی» (مربع با فلش رو به بالا) را بزنید.',
@@ -53,6 +54,7 @@ export function GetApp({ id = 'get-app' }) {
       {!ios && <p class="muted small">
         {T.apkNote} · در <a href={APK_URL.replace('/download/ganjoor.apk', '')}>{'صفحهٔ انتشار گیت\u200cهاب'}</a>، از بخش <bdi>Assets</bdi> فایل <bdi>ganjoor.apk</bdi> را بگیرید.
       </p>}
+      {!ios && <p class="muted small">{T.apkStorage}</p>}
       {ios && steps && (
         <ol class="get-app-steps">
           {T.iosSteps.map((s) => <li key={s}>{s}</li>)}

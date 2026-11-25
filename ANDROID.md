@@ -52,7 +52,8 @@ adb shell am start -n io.github.sepehr071.ganjoor/.MainActivity
   share sheet (poem and poet shares link to the public Beyt site); links to other origins
   open in a Custom Tab (system browser), never in the app WebView; status bar icons follow the theme (`color-scheme`
   and `--bg` from `tokens.css`).
-- Icons and splash: sources in `resources/*.svg` (same emblem as `public/icon.svg`), generated into `android/app/src/main/res`
+- Icons and splash: sources in `resources/*.svg` use the same book-and-arch mark as `public/icons/beyt-512.png`.
+  Generate them into `android/app/src/main/res`
   with `npx capacitor-assets generate --android --assetPath resources`. Android 12+ system splash shows the adaptive icon on
   ivory (`values/colors.xml`) or lapis in dark mode (`values-night/colors.xml`).
 - The service worker stays on: Capacitor routes service-worker requests to the bundled files

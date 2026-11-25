@@ -217,11 +217,12 @@ main.bleed { max-width: none; padding-inline: 0; padding-top: 0; }
 }
 .field:focus-visible { border-color: var(--accent); }
 select.field { border-radius: var(--radius-sm); }
-/* one pill: icon and field together, Enter searches */
+/* one pill: field and search action together */
 .search-pill {
   display: flex; align-items: center; gap: 0.6rem; min-height: 52px; padding-inline: 1.1rem; border-radius: 999px;
   background: var(--surface); border: 1px solid var(--border); color: var(--accent); box-shadow: var(--shadow);
 }
+form.search-pill { padding-inline-end: 3px; }
 .search-pill:focus-within { border-color: var(--accent); outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent); }
 .search-pill input {
   flex: 1; min-width: 0; min-height: 48px; border: 0; background: none; outline: none; color: var(--text); font-size: 1rem;
@@ -561,6 +562,9 @@ details.summary p { padding-bottom: var(--space-4); }
 .hero-meta { margin-block-start: 0.6rem; font-size: 0.85rem; color: var(--text-muted); }
 .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); margin-top: var(--space-4); min-block-size: 44px; }
 .hero-actions .btn.primary { padding-inline: 18px; }
+.hero-short .hero-bar { height: 48px; }
+.hero-short > .search-pill { margin-block: var(--space-2) var(--space-4); }
+.hero-short .hero-plate { height: clamp(4rem, 12svh, 6rem); object-position: 50% 38%; }
 .home-body { max-width: 62rem; padding-block-start: var(--space-5); }
 .home-body.stack-lg > * + * { margin-top: 22px; }
 .quick { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }

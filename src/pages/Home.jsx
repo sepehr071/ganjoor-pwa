@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import { useLocation } from 'preact-iso'
 import { url } from '../lib/base.js'
 import { routes as exploreRoutes } from '../explore/index.js'
@@ -17,8 +17,9 @@ const lastPart = (t = '') => t.split('»').pop().trim()
 const playingPoem = (s) => s.poem?.id
 const isPlaying = (s) => s.playing
 const explore = exploreRoutes.filter((r) => r.nav)
+const SHORT_HOME = '(max-width: 47.99rem) and (max-height: 45rem)'
 
-function Hero() {
+function Hero({ search }) {
   const [day, setDay] = useState(() => new Date().toDateString())
   useEffect(() => {
     let timer
@@ -56,13 +57,14 @@ function Hero() {
   }
 
   return (
-    <section class="hero lapis" aria-labelledby="hero-t" aria-busy={!c && !error}>
+    <div class={`hero lapis${search ? ' hero-short' : ''}`}>
       <div class="hero-bar">
         <Emblem />
         <span class="brand-word" aria-hidden="true">بیت</span>
         <a class="round-btn" href={url('/settings')} aria-label="تنظیمات"><Icon name="settings" size={21} /></a>
       </div>
-      <div class="hero-spread">
+      {search}
+      <section class="hero-spread" aria-labelledby="hero-t" aria-busy={!c && !error}>
         <div class="hero-copy">
           <div class="hero-heading">
             <h2 id="hero-t" class="hero-title">بیت امروز</h2>
@@ -98,8 +100,8 @@ function Hero() {
           </div>
         </div>
         <img class="hero-plate" src={url('/art/garden-illustration.webp')} width="1000" height="750" alt="" fetchpriority="high" />
-      </div>
-    </section>
+      </section>
+    </div>
   )
 }
 
@@ -125,28 +127,49 @@ function ContinueCard({ h }) {
 export default function Home() {
   useTitle('')
   const { route } = useLocation()
+  const searchInput = useRef(null)
+  const [searchLayout, setSearchLayout] = useState(() => ({ short: matchMedia(SHORT_HOME).matches, draft: '', focused: false }))
   const [history] = useStored(HISTORY, [])
   const { data: poets } = useAsync((signal) => getPoets({ signal }), [])
   const famous = (poets || []).filter((p) => p.pinOrder > 0).sort((a, b) => a.pinOrder - b.pinOrder).slice(0, 12)
 
+  useEffect(() => {
+    const media = matchMedia(SHORT_HOME)
+    const sync = () => {
+      const input = searchInput.current
+      setSearchLayout((layout) => !input || layout.short === media.matches ? layout : {
+        short: media.matches,
+        draft: input.value,
+        focused: document.activeElement === input,
+      })
+    }
+    media.addEventListener('change', sync)
+    sync()
+    return () => media.removeEventListener('change', sync)
+  }, [])
+  useLayoutEffect(() => {
+    if (searchLayout.focused) searchInput.current?.focus({ preventScroll: true })
+  }, [searchLayout])
+
+  const search = (
+    <form class="search-pill" role="search" onSubmit={(e) => {
+      e.preventDefault()
+      const q = new FormData(e.currentTarget).get('q').toString().trim()
+      route('/search' + (q ? '?q=' + encodeURIComponent(q) : ''))
+    }}>
+      <label class="sr-only" for="home-q">جستجو در شعرها</label>
+      <input id="home-q" name="q" type="search" ref={searchInput} defaultValue={searchLayout.draft}
+        placeholder="جستجو در شعرها" enterkeyhint="search" />
+      <button class="btn primary icon" type="submit" aria-label="جستجو"><Icon name="search" size={20} /></button>
+    </form>
+  )
+
   return (
     <div class="home">
       <h1 class="sr-only">بیت: شعر فارسی بر پایهٔ گنجور</h1>
-      <Hero />
+      <Hero search={searchLayout.short ? search : null} />
       <div class="home-body wrap stack-lg">
-        <form
-          class="search-pill"
-          role="search"
-          onSubmit={(e) => {
-            e.preventDefault()
-            const q = new FormData(e.currentTarget).get('q').toString().trim()
-            route('/search' + (q ? '?q=' + encodeURIComponent(q) : ''))
-          }}
-        >
-          <Icon name="search" size={20} />
-          <label class="sr-only" for="home-q">جستجو در شعرها</label>
-          <input id="home-q" name="q" type="search" placeholder="جستجو در شعرها" enterkeyhint="search" />
-        </form>
+        {!searchLayout.short && search}
 
         <nav class="quick" aria-label="شروع سریع">
           <a class="btn browse-poets" href={url('/poets')}><Icon name="poets" size={20} />مرور شاعران و آثارشان</a>

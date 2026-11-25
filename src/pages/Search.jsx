@@ -143,10 +143,10 @@ export default function Search() {
         {poetId && <p><a href={url(searchPath(q, 'text', null))}>جستجو در آثار همهٔ شاعران</a></p>}
       </div>
       <form class="search-pill" role="search" onSubmit={(e) => { e.preventDefault(); if (input.trim()) go(input.trim(), mode) }}>
-        <Icon name="search" size={20} />
         <label class="sr-only" for="q">عبارت جستجو</label>
         <input id="q" type="search" value={input} onInput={(e) => setInput(e.currentTarget.value)} ref={inputRef}
           placeholder={mode === 'meaning' ? 'مثلاً: دلتنگی برای وطن' : 'واژه یا مصرع…'} enterkeyhint="search" />
+        <button class="btn primary icon" type="submit" aria-label="جستجو"><Icon name="search" size={20} /></button>
       </form>
       {!poetId && <div class="segmented" role="group" aria-label="نوع جستجو">
         <button type="button" aria-pressed={mode === 'text'} onClick={() => go(input.trim() || q, 'text')}>در متن</button>

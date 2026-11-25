@@ -4,7 +4,7 @@
 
 برای اندروید ۷ و بالاتر. پس از دانلود، فایل `ganjoor.apk` را باز کنید و «نصب» را بزنید.
 
-[باز کردن نسخهٔ وب](https://sepehr071.github.io/ganjoor-pwa/)
+**[باز کردن نسخهٔ وب بیت (PWA)](https://sepehr071.github.io/ganjoor-pwa/)**
 
 «بیت» is an independent, unofficial, installable and offline-capable reader for classical Persian poetry, built on the
 open data and public API of [Ganjoor (ganjoor.net)](https://ganjoor.net). It is not made, endorsed or supported by
