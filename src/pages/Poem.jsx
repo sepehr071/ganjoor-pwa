@@ -13,6 +13,7 @@ import { usePlayer, play } from '../lib/player.js'
 import { url } from '../lib/base.js'
 import { Icon } from '../components/Icon.jsx'
 import { Couplets, LiteraryAnnotations } from '../components/Couplets.jsx'
+import { PoemArt } from '../components/PoemArt.jsx'
 import { Sheet } from '../components/Sheet.jsx'
 import { ReciterList } from '../components/Player.jsx'
 import { OfflineRecitations } from '../components/OfflineRecitations.jsx'
@@ -184,6 +185,7 @@ export default function Poem({ id }) {
             <a class="btn" href={url('/settings#rd')}><Icon name="settings" size={18} />خط و اندازهٔ شعر</a>
           </div>
         </header>
+        <PoemArt id={poem.id} />
         {!coach && (
           <p class="coach" role="note">
             روی هر بیت بزنید تا معنی و آرایه{'\u200c'}های ثبت{'\u200c'}شدهٔ آن را ببینید.

@@ -33,12 +33,12 @@ const NAV = [
   { href: '/bookmarks', label: 'نشان\u200cشده\u200cها', icon: 'bookmark' },
 ]
 const MORE = [
-  { href: '/faal', label: 'فال حافظ' },
-  { href: '/random', label: 'یک شعر تصادفی' },
-  { href: '/history', label: 'خوانده\u200cشده\u200cها' },
-  { href: '/offline', label: 'کتابخانهٔ آفلاین' },
-  { href: '/settings', label: 'تنظیمات' },
-  { href: '/about', label: 'درباره بیت' },
+  { href: '/faal', label: 'فال حافظ', icon: 'faal' },
+  { href: '/random', label: 'یک شعر تصادفی', icon: 'random' },
+  { href: '/history', label: 'خوانده\u200cشده\u200cها', icon: 'history' },
+  { href: '/offline', label: 'کتابخانهٔ آفلاین', icon: 'offline' },
+  { href: '/settings', label: 'تنظیمات', icon: 'settings' },
+  { href: '/about', label: 'درباره بیت', icon: 'about' },
 ]
 const explore = exploreRoutes.filter((r) => r.nav)
 // Pages that draw their own top bar on a phone (hero, app bar), so the site header steps aside there.
@@ -133,7 +133,7 @@ function Shell() {
           {explore.map((r) => (
             <li key={r.path}>
               <a class="hub-card" href={url(r.path)} aria-current={current(r.path) ? 'page' : undefined}>
-                <span class="rosette" aria-hidden="true" />
+                <span class="hub-icon" data-icon={r.icon}><Icon name={r.icon} size={21} /></span>
                 <b>{r.title}</b>
                 {r.description && <small>{r.description}</small>}
               </a>
@@ -145,6 +145,7 @@ function Shell() {
           {MORE.map((r) => (
             <li key={r.href}>
               <a class="list-link" href={url(r.href)} aria-current={current(r.href) ? 'page' : undefined}>
+                <Icon name={r.icon} size={20} class="hub-shortcut-icon" />
                 <span class="list-main list-title">{r.label}</span>
               </a>
             </li>

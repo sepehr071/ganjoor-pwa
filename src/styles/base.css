@@ -367,6 +367,16 @@ form.search-pill { padding-inline-end: 3px; }
   border-radius: 50%;
 }
 .status .btn { margin-top: var(--space-3); }
+.saved-library .status:has(.library-empty-art) { padding-block: var(--space-4) var(--space-5); }
+.saved-library .status:has(.library-empty-art)::before { display: none; }
+.library-empty-art {
+  display: block; width: min(100%, 20rem); height: auto; margin: 0 auto var(--space-4);
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2);
+}
+@media (max-height: 40rem) {
+  .saved-library .status:has(.library-empty-art) { padding-block-start: 0; }
+  .library-empty-art { margin-block-end: var(--space-2); }
+}
 .status.error { color: var(--text); }
 .status.error::before { background: var(--cinnabar); }
 .skeleton { display: grid; gap: 0.9rem; padding: var(--space-4) 0; }
@@ -394,6 +404,19 @@ form.search-pill { padding-inline-end: 3px; }
 .listen { margin-top: var(--space-2); }
 .poem-audio-actions { justify-content: center; margin-top: var(--space-2); }
 .poem-audio-actions .listen { margin-top: 0; }
+.poem-art {
+  position: relative; overflow: hidden; height: clamp(5rem, 21vw, 8rem); margin-block-start: var(--space-3);
+  border: 1px solid var(--gold); border-radius: 0.65rem; background: var(--surface-2);
+}
+.poem-art img {
+  width: 100%; height: 100%; object-fit: cover; object-position: var(--poem-art-focus);
+  transform: scale(1.08); transform-origin: var(--poem-art-focus);
+}
+.poem-art-marks {
+  position: absolute; inset-inline-end: var(--space-2); inset-block-end: var(--space-2);
+  display: flex; gap: 7px; padding: 5px 7px; border: 1px solid #d9a847; border-radius: 999px; background: #182347;
+}
+.poem-art-marks i { width: 5px; height: 5px; transform: rotate(45deg); }
 /* the hint shows once, as a coach mark pointing at the first beyt */
 .coach {
   position: relative; margin: var(--space-3) auto 0.5rem; width: fit-content; max-width: 100%;
@@ -526,7 +549,12 @@ details.summary p { padding-bottom: var(--space-4); }
   display: grid; gap: 2px; align-content: end; min-height: 96px; height: 100%; padding: 0.8rem 1rem; border-radius: 18px;
   background: var(--bg); border: 1px solid var(--border); color: var(--text); text-decoration: none; transition: transform 0.15s, border-color 0.15s;
 }
-.hub-card .rosette { width: 1.1rem; height: 1.1rem; margin-bottom: auto; }
+.hub-icon {
+  display: grid; place-items: center; justify-self: start; width: 2.25rem; height: 2.25rem;
+  margin-bottom: var(--space-1); border-radius: 0.65rem; color: var(--accent); background: var(--accent-soft);
+}
+.hub-icon:is([data-icon='literary'], [data-icon='museum']) { color: var(--gold-ink); background: var(--gold-soft); }
+.hub-shortcut-icon { flex: none; color: var(--accent); }
 .hub-card small { color: var(--text-muted); font-size: 0.78rem; line-height: 1.6; }
 .hub-card:hover, .hub-card[aria-current='page'] { border-color: var(--accent); }
 .hub-card:active { transform: scale(0.97); }
@@ -570,26 +598,25 @@ details.summary p { padding-bottom: var(--space-4); }
 .quick { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .quick .browse-poets, .poet-actions .poet-search { grid-column: 1 / -1; }
 .rich {
-  position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;
-  min-height: 128px; padding: 14px 16px; border-radius: 20px; color: var(--text); text-decoration: none; transition: transform 0.15s;
+  min-width: 0; overflow: hidden; display: flex; flex-direction: column;
+  border-radius: 20px; color: var(--text); text-decoration: none; transition: border-color 0.15s, transform 0.15s;
 }
 .rich:active { transform: scale(0.97); }
-.rich b { font-family: var(--font-display); font-size: 1.25rem; line-height: 1.9; }
-.rich small { font-size: 0.78rem; }
+.rich-picture { display: block; overflow: hidden; aspect-ratio: 16 / 9; max-height: 10rem; }
+.rich-picture img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.rich-copy { padding: 0.55rem 0.75rem 0.75rem; }
+.rich b { display: flex; align-items: center; gap: 0.3em; font-family: var(--font-display); font-size: clamp(1.05rem, 4.5vw, 1.35rem); line-height: 1.9; }
+.rich b svg { flex: none; }
+.rich small { display: block; font-size: 0.78rem; line-height: 1.55; }
 .rich.faal { background: var(--gold-soft); border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--gold-soft)); }
-.rich.faal small { color: var(--gold-ink); }
-.rich.faal .rich-art { position: absolute; z-index: -1; width: 132px; height: 132px; top: -40px; inset-inline-end: -38px; }
+.rich.faal :is(small, svg) { color: var(--gold-ink); }
 .rich.random { background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--accent-soft)); }
-.rich.random small { color: var(--accent); }
-.rich.random::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; background: var(--accent); opacity: 0.16;
-  -webkit-mask: var(--girih-tile) center / 30px 30px; mask: var(--girih-tile) center / 30px 30px;
-}
-.rich.random .rich-art {
-  position: absolute; z-index: -1; width: 64px; height: 64px; top: 14px; inset-inline-end: 14px; background: var(--accent);
-  -webkit-mask: var(--rosette) center / contain no-repeat; mask: var(--rosette) center / contain no-repeat;
-}
+.rich.random :is(small, svg) { color: var(--accent); }
 .rich:hover { border-color: var(--accent); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .rich-picture img { transition: transform 0.35s ease; }
+  .rich:hover img { transform: scale(1.045); }
+}
 .cont-card {
   display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 18px;
   background: var(--surface); border: 1px solid var(--border); color: var(--text); text-decoration: none; transition: transform 0.15s, border-color 0.15s;
@@ -797,6 +824,15 @@ details.summary p { padding-bottom: var(--space-4); }
 
 /* ---------- faal: a shamseh that turns while you hold the intention, then opens into the page ---------- */
 .faal-stage { text-align: center; padding: var(--space-4) 0; display: grid; gap: var(--space-4); justify-items: center; }
+.faal-picture {
+  position: relative; overflow: hidden; width: min(100%, 32rem); aspect-ratio: 16 / 9;
+  border: 1px solid var(--gold); border-radius: var(--radius); background: var(--lapis);
+}
+.faal-plate { display: block; width: 100%; height: 100%; object-fit: cover; }
+.faal-picture .shamseh {
+  position: absolute; inset: 0; margin: auto; width: clamp(3.5rem, 20%, 6rem); height: auto;
+  aspect-ratio: 1; padding: 0.35rem; border-radius: 50%; background: rgb(11 19 48 / 0.9); color: #e2c27a;
+}
 .shamseh { width: 11rem; height: 11rem; color: var(--gold); }
 .shamseh .fill { fill: var(--accent); }
 .shamseh .dot { fill: var(--cinnabar); }

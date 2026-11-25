@@ -76,7 +76,8 @@ export default function Bookmarks() {
         <Empty>شعری با این عبارت در فهرست پیدا نشد.</Empty>
       ) : (
         <Empty>
-          <Icon name={downloaded ? 'offline' : 'bookmark'} size={26} />
+          {downloaded ? <Icon name="offline" size={26} />
+            : <img class="library-empty-art" src={url('/art/saved-library.webp')} alt="" width="800" height="450" loading="lazy" />}
           <p>{downloaded ? 'هنوز شعری برای خواندن آفلاین ذخیره نکرده\u200cاید.' : 'هنوز شعری را نشان نکرده\u200cاید.'}</p>
           {!downloaded && <a class="btn" href={url('/poets')}>مرور شاعران</a>}
         </Empty>

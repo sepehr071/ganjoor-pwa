@@ -11,7 +11,7 @@ import { usePlayer, play, toggle } from '../lib/player.js'
 import { Icon } from '../components/Icon.jsx'
 import { Arch } from '../components/Arch.jsx'
 import { GetApp } from '../components/GetApp.jsx'
-import { Emblem, Shamseh } from '../components/Ornament.jsx'
+import { Emblem } from '../components/Ornament.jsx'
 
 const lastPart = (t = '') => t.split('»').pop().trim()
 const playingPoem = (s) => s.poem?.id
@@ -174,14 +174,18 @@ export default function Home() {
         <nav class="quick" aria-label="شروع سریع">
           <a class="btn browse-poets" href={url('/poets')}><Icon name="poets" size={20} />مرور شاعران و آثارشان</a>
           <a class="rich faal" href={url('/faal')}>
-            <Shamseh class="rich-art" />
-            <b>فال حافظ</b>
-            <small>نیت کنید و غزلی بگیرید</small>
+            <span class="rich-picture"><img src={url('/art/draw-hafez.webp')} width="800" height="450" alt="" loading="lazy" /></span>
+            <span class="rich-copy">
+              <b><Icon name="faal" size={18} />فال حافظ</b>
+              <small>نیت کنید و غزلی بگیرید</small>
+            </span>
           </a>
           <a class="rich random" href={url('/random')}>
-            <span class="rich-art" aria-hidden="true" />
-            <b>شعر تصادفی</b>
-            <small>از هر شاعری</small>
+            <span class="rich-picture"><img src={url('/art/random-poem.webp')} width="800" height="450" alt="" loading="lazy" /></span>
+            <span class="rich-copy">
+              <b><Icon name="random" size={18} />شعر تصادفی</b>
+              <small>از هر شاعری</small>
+            </span>
           </a>
         </nav>
 
@@ -198,10 +202,10 @@ export default function Home() {
         <section class="home-explore" aria-labelledby="home-explore-h">
           <div class="section-title"><h2 id="home-explore-h">کاوش در ادبیات</h2></div>
           <ul class="hub-grid">
-            {explore.map(({ path, title, description }) => (
+            {explore.map(({ path, title, description, icon }) => (
               <li key={path}>
                 <a class="hub-card" href={url(path)}>
-                  <span class="rosette" aria-hidden="true" />
+                  <span class="hub-icon" data-icon={icon}><Icon name={icon} size={21} /></span>
                   <b>{title}</b>
                   <small>{description}</small>
                 </a>

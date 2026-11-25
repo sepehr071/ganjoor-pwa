@@ -4,6 +4,7 @@ import { getFaal } from '../api.js'
 import { useTitle } from '../lib/hooks.js'
 import { groupCouplets } from '../lib/poem.js'
 import { Couplets } from '../components/Couplets.jsx'
+import { PoemArt } from '../components/PoemArt.jsx'
 import { ErrorState } from '../components/Status.jsx'
 import { Sarlowh, Shamseh } from '../components/Ornament.jsx'
 
@@ -15,6 +16,7 @@ export default function Faal() {
   const [poem, setPoem] = useState(null)
   const [error, setError] = useState(null)
   const headRef = useRef(null)
+  const drawing = phase === 'drawing'
 
   const draw = async () => {
     setPhase('drawing')
@@ -37,16 +39,14 @@ export default function Faal() {
         <p>نیت کنید، نفسی بکشید و فال بگیرید.</p>
       </div>
 
-      {phase === 'idle' && (
-        <div class="faal-stage">
-          <Shamseh />
-          <button type="button" class="btn primary" onClick={draw}>نیت کردم</button>
-        </div>
-      )}
-      {phase === 'drawing' && (
-        <div class="faal-stage" role="status">
-          <Shamseh turning />
-          <p class="muted">دلتان را به حافظ بسپارید…</p>
+      {(phase === 'idle' || drawing) && (
+        <div class="faal-stage" role={drawing ? 'status' : undefined}>
+          <div class="faal-picture">
+            <img class="faal-plate" src={url('/art/draw-hafez.webp')} alt="" width="800" height="450" />
+            {drawing && <Shamseh turning />}
+          </div>
+          {drawing ? <p class="muted">دلتان را به حافظ بسپارید…</p>
+            : <button type="button" class="btn primary" onClick={draw}>نیت کردم</button>}
         </div>
       )}
       {phase === 'error' && <ErrorState error={error} onRetry={draw} />}
@@ -57,6 +57,7 @@ export default function Faal() {
               <Sarlowh />
               <h2 ref={headRef} tabIndex={-1} class="display" style="outline:none">{poem.title}</h2>
             </header>
+            <PoemArt id={poem.id} />
             <Couplets couplets={groupCouplets(poem.verses || [])} credit={`${poem.fullTitle}، گنجور`} url={location.origin + url('/poem/' + poem.id)} />
           </div>
           <p class="credit">منبع: <a href={'https://ganjoor.net' + poem.fullUrl} target="_blank" rel="noopener noreferrer">گنجور</a></p>
