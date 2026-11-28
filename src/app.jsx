@@ -10,12 +10,14 @@ import { useStored, SETTINGS, DEFAULT_SETTINGS, applySettings } from './lib/stor
 import { setNavigator } from './lib/player.js'
 import { url, strip, sharedPath } from './lib/base.js'
 import { listenWidgetLinks } from './lib/native.js'
+import { voiceTokenUrl } from './lib/voice.js'
 
 const Home = lazy(() => import('./pages/Home.jsx'))
 const Poets = lazy(() => import('./pages/Poets.jsx'))
 const Poet = lazy(() => import('./pages/Poet.jsx'))
 const Cat = lazy(() => import('./pages/Cat.jsx'))
 const Poem = lazy(() => import('./pages/Poem.jsx'))
+const Voice = import.meta.env.VITE_VOICE_TOKEN_URL ? lazy(() => import('./pages/Voice.jsx')) : null
 const Search = lazy(() => import('./pages/Search.jsx'))
 const Faal = lazy(() => import('./pages/Faal.jsx'))
 const Random = lazy(() => import('./pages/Random.jsx'))
@@ -165,6 +167,7 @@ function Shell() {
             <Route path="/poet/:id" component={Poet} />
             <Route path="/cat/:id" component={Cat} />
             <Route path="/poem/:id" component={Poem} />
+            {Voice && voiceTokenUrl && <Route path="/voice/:id" component={Voice} />}
             <Route path="/search" component={Search} />
             <Route path="/faal" component={Faal} />
             <Route path="/random" component={Random} />

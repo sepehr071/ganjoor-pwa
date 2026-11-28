@@ -7,12 +7,19 @@ import { StatusBar, Style } from '@capacitor/status-bar'
 
 export const isNative = Capacitor.isNativePlatform()
 
+export function widgetLinkPath(url) {
+  const match = /^beyt:\/\/(poem|voice)\/([1-9]\d*)$/.exec(url)
+  if (!match) return null
+  const [, page, id] = match
+  return page === 'voice' ? '/voice/' + id + '?widget=1' : '/poem/' + id
+}
+
 export function listenWidgetLinks(route) {
   if (!isNative) return
   let active = true
   const listener = App.addListener('appUrlOpen', ({ url }) => {
-    const match = /^beyt:\/\/poem\/([1-9]\d*)$/.exec(url)
-    if (active && match) route(`/poem/${match[1]}`)
+    const path = widgetLinkPath(url)
+    if (active && path) route(path)
   })
   return () => {
     active = false

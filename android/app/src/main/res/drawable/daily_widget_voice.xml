@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M9,5a3,3 0,0 1,6 0v7a3,3 0,0 1,-6 0zM5,11v1a7,7 0,0 0,14 0v-1M12,19v3M9,22h6"
+        android:strokeColor="@color/daily_widget_night_action"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.7" />
+</vector>

@@ -28,6 +28,7 @@ jobs:
       - run: npm run build
         env:
           BASE_PATH: /ganjoor-pwa/
+          VITE_VOICE_TOKEN_URL: ${{ vars.VITE_VOICE_TOKEN_URL }}
       - name: Build offline poet packs
         run: |
           corpus="$RUNNER_TEMP/ganjoor-v2026.1.tar.zst"

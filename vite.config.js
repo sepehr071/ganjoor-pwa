@@ -1,15 +1,30 @@
 import { defineConfig } from 'vite'
 import preact from '@preact/preset-vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import { pilotTokenUrl } from './src/lib/voiceUrl.js'
 
 const POET_IMG = /^https:\/\/api\.ganjoor\.net\/api\/ganjoor\/poet\/image\//
 // '/' locally and on Android; '/ganjoor-pwa/' for GitHub Pages (set by the Pages workflow).
 const base = process.env.BASE_PATH || '/'
 
+function voiceWidgetMarker() {
+  let enabled = false
+  return {
+    name: 'beyt-voice-widget',
+    configResolved(config) {
+      enabled = Boolean(pilotTokenUrl(config.env.VITE_VOICE_TOKEN_URL))
+    },
+    generateBundle() {
+      if (enabled) this.emitFile({ type: 'asset', fileName: 'voice-enabled', source: '1' })
+    },
+  }
+}
+
 export default defineConfig({
   base,
   plugins: [
     preact(),
+    voiceWidgetMarker(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png', 'icon.svg', 'fonts/*.woff2'],

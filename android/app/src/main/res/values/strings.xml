@@ -7,4 +7,14 @@
     <string name="daily_widget_title">بیت امروز</string>
     <string name="daily_widget_open_app">بیت را باز کنید</string>
     <string name="daily_widget_read_poem">خواندن شعر</string>
+    <string name="daily_widget_next_poem">بیت دیگر</string>
+    <string name="daily_widget_voice">گفت&#x200c;وگو دربارهٔ این بیت</string>
+    <string name="daily_widget_settings">تنظیمات ابزارک</string>
+    <string name="daily_widget_poet_label">شاعر</string>
+    <string name="daily_widget_all_poets">همهٔ شاعران</string>
+    <string name="daily_widget_theme_label">رنگ ابزارک</string>
+    <string name="daily_widget_night">لاجوردی</string>
+    <string name="daily_widget_paper">کاغذی</string>
+    <string name="daily_widget_save">ذخیره</string>
+    <string name="daily_widget_cancel">انصراف</string>
 </resources>

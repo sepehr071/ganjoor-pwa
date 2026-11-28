@@ -11,6 +11,7 @@ import {
 import { getLiteraryAnnotations } from '../lib/literary.js'
 import { usePlayer, play } from '../lib/player.js'
 import { url } from '../lib/base.js'
+import { voiceTokenUrl } from '../lib/voice.js'
 import { Icon } from '../components/Icon.jsx'
 import { Couplets, LiteraryAnnotations } from '../components/Couplets.jsx'
 import { PoemArt } from '../components/PoemArt.jsx'
@@ -181,6 +182,9 @@ export default function Poem({ id }) {
                   <Icon name={savedAudio.length ? 'check' : 'offline'} size={18} /> خوانش آفلاین
                 </button>
               </>
+            )}
+            {voiceTokenUrl && (
+              <a class="btn" href={url('/voice/' + poem.id)}><Icon name="mic" size={18} />{'گفت\u200cوگو دربارهٔ شعر'}</a>
             )}
             <a class="btn" href={url('/settings#rd')}><Icon name="settings" size={18} />خط و اندازهٔ شعر</a>
           </div>

@@ -2,4 +2,11 @@
 <resources>
     <!-- Android 12+ system splash: ivory paper (tokens.css bg, light). -->
     <color name="splash_background">#F4EEDF</color>
+    <color name="daily_widget_night_ink">#F4EEDF</color>
+    <color name="daily_widget_night_poet">#DBCBA7</color>
+    <color name="daily_widget_night_action">#80DBCF</color>
+    <color name="daily_widget_night_gold">#EFD393</color>
+    <color name="daily_widget_paper_ink">#272C3C</color>
+    <color name="daily_widget_paper_poet">#624F35</color>
+    <color name="daily_widget_paper_accent">#0A554D</color>
 </resources>
