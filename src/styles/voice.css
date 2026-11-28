@@ -10,7 +10,71 @@
   overflow-wrap: anywhere;
 }
 .voice-folio figcaption { margin-block-start: var(--space-2); font-size: 0.875rem; }
-.voice-controls { display: grid; gap: var(--space-3); }
+.voice-controls {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: clamp(1rem, 5vw, 2rem);
+  text-align: center;
+}
 .voice-controls p { margin: 0; }
-.voice-controls [role='alert'] { color: var(--text); border-inline-start: 3px solid var(--cinnabar); padding-inline-start: var(--space-2); }
-.voice-actions p:empty { display: none; }
+.voice-controls .btn { min-inline-size: min(12rem, 100%); }
+.voice-controls [role='alert'] { color: var(--danger); }
+.voice-guide { max-inline-size: 42ch; font-size: 0.9375rem; }
+.voice-stage { display: grid; justify-items: center; gap: var(--space-2); }
+.voice-status { min-block-size: 1.65em; font-size: 1.125rem; font-weight: 700; }
+
+.voice-orb {
+  --orb-tone: var(--gold);
+  --orb-base: var(--surface-2);
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: clamp(8.5rem, 39vw, 11rem);
+  aspect-ratio: 1;
+}
+.voice-orb::before, .voice-orb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--orb-tone) 48%, var(--surface));
+  border-radius: 50%;
+}
+.voice-orb::after { inset: 8%; }
+.voice-orb-core {
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  inline-size: 72%;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--orb-tone) 65%, var(--surface));
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 25%, var(--surface), transparent 56%),
+    radial-gradient(circle at 48% 39%, var(--orb-base) 40%, color-mix(in srgb, var(--orb-tone) 63%, var(--orb-base)));
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--orb-tone) 24%, transparent);
+}
+.voice-controls[data-state='connecting'] .voice-orb::before { border-style: dashed; }
+.voice-controls[data-state='listening'] .voice-orb { --orb-tone: var(--accent); --orb-base: var(--accent-soft); }
+.voice-controls[data-state='listening'] .voice-status { color: var(--accent); }
+.voice-controls[data-state='speaking'] .voice-orb { --orb-base: var(--gold-soft); }
+.voice-controls[data-state='speaking'] .voice-status { color: var(--gold-ink); }
+.voice-wave { display: flex; align-items: center; gap: 0.25rem; block-size: 2rem; }
+.voice-wave span { inline-size: 0.25rem; block-size: 45%; border-radius: 1em; background: currentColor; }
+.voice-wave span:nth-child(even) { block-size: 70%; }
+.voice-wave span:nth-child(3) { block-size: 100%; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .voice-controls[data-state='connecting'] .voice-orb::before { animation: voice-spin 9s linear infinite; }
+  .voice-controls[data-state='listening'] .voice-orb::before { animation: voice-ripple 2.4s ease-out infinite; }
+  .voice-wave span { animation: voice-wave 1s ease-in-out infinite alternate; }
+  .voice-wave span:nth-child(2) { animation-delay: -0.6s; }
+  .voice-wave span:nth-child(3) { animation-delay: -0.15s; }
+  .voice-wave span:nth-child(4) { animation-delay: -0.8s; }
+  .voice-wave span:nth-child(5) { animation-delay: -0.4s; }
+}
+@keyframes voice-spin { to { transform: rotate(1turn); } }
+@keyframes voice-ripple {
+  from { transform: scale(0.87); opacity: 1; }
+  to { transform: scale(1.08); opacity: 0; }
+}
+@keyframes voice-wave { from { transform: scaleY(0.3); } to { transform: scaleY(1); } }

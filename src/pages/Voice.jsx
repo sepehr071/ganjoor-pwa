@@ -14,8 +14,8 @@ const TITLE = 'گفت\u200cوگوی صوتی'
 const CONNECTION_ERROR = 'اتصال به همراه صوتی برقرار نشد. کمی بعد دوباره امتحان کنید.'
 const MESSAGES = {
   connecting: 'در حال اتصال…',
-  listening: 'همراه صوتی در حال شنیدن است.',
-  speaking: 'همراه صوتی در حال پاسخ دادن است.',
+  listening: 'نوبت شماست. صحبت کنید.',
+  speaking: 'دستیار دارد پاسخ می\u200cدهد.',
   ending: 'در حال پایان تماس…',
 }
 
@@ -92,8 +92,7 @@ function VoiceCall({ context }) {
     }
   }, [end])
 
-  function start(event) {
-    event.preventDefault()
+  function start() {
     if (!online || !canUseMic || currentCall.current || document.hidden) return
 
     const call = { abort: new AbortController(), session: null, opening: null }
@@ -144,26 +143,33 @@ function VoiceCall({ context }) {
   }
 
   return (
-    <form class="card voice-controls" onSubmit={start} aria-label={TITLE}>
-      <p id="voice-privacy" class="muted small">
-        {'با شروع گفت\u200cوگو، صدا برای پردازش زنده به ElevenLabs فرستاده می\u200cشود. متن گفت\u200cوگو طبق تنظیمات همراه صوتی در ElevenLabs نگهداری می\u200cشود.'}
-      </p>
-      <div class="row voice-actions">
-        {active ? (
-          <button class="btn" type="button" disabled={status === 'ending'} onClick={end}>
-            <Icon name="close" size={18} />{status === 'connecting' ? 'لغو اتصال' : 'پایان گفت\u200cوگو'}
-          </button>
-        ) : (
-          <button class="btn primary" type="submit" disabled={!online || !canUseMic} aria-describedby="voice-privacy">
-            <Icon name="mic" size={19} />{'شروع گفت\u200cوگو'}
-          </button>
-        )}
-        <p role="status">{MESSAGES[status]}</p>
+    <section class="card voice-controls" data-state={status} aria-label={TITLE}>
+      <div class="voice-stage">
+        <div class="voice-orb" aria-hidden="true">
+          <div class="voice-orb-core">
+            {status === 'speaking' ? (
+              <div class="voice-wave"><span /><span /><span /><span /><span /></div>
+            ) : <Icon name="mic" size={32} />}
+          </div>
+        </div>
+        <p class="voice-status" role="status">{MESSAGES[status]}</p>
       </div>
+      {active ? (
+        <button class="btn" type="button" disabled={status === 'ending'} onClick={end}>
+          <Icon name="close" size={18} />{status === 'connecting' ? 'لغو اتصال' : 'پایان گفت\u200cوگو'}
+        </button>
+      ) : (
+        <button class="btn primary" type="button" disabled={!online || !canUseMic} onClick={start} aria-describedby="voice-guide">
+          <Icon name="mic" size={19} />{'شروع گفت\u200cوگو'}
+        </button>
+      )}
       {!online && <p>{'برای گفت\u200cوگوی صوتی به اینترنت وصل شوید.'}</p>}
       {!canUseMic && <p>میکروفون در این مرورگر در دسترس نیست.</p>}
       {error && <p role="alert">{error}</p>}
-    </form>
+      {!active && <p id="voice-guide" class="voice-guide muted">
+        {'«شروع گفت\u200cوگو» را بزنید و صبر کنید تا نوبت شما برسد. می\u200cتوانید معنی یک بیت را بپرسید یا دربارهٔ شعر و شاعرش گفت\u200cوگو کنید.'}
+      </p>}
+    </section>
   )
 }
 
