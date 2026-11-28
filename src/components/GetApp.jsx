@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks'
 import { Icon } from './Icon.jsx'
-import { APK_URL, canPrompt, isInstalled, isIOS, onInstallChange, promptInstall } from '../lib/install.js'
+import { APK_RELEASE_URL, APK_URL, canPrompt, isInstalled, isIOS, onInstallChange, promptInstall } from '../lib/install.js'
 
 const T = {
   title: 'بیت را نصب کنید',
@@ -52,7 +52,7 @@ export function GetApp({ id = 'get-app' }) {
         </a>}
       </div>
       {!ios && <p class="muted small">
-        {T.apkNote} · در <a href={APK_URL.replace('/download/ganjoor.apk', '')}>{'صفحهٔ انتشار گیت\u200cهاب'}</a>، از بخش <bdi>Assets</bdi> فایل <bdi>ganjoor.apk</bdi> را بگیرید.
+        {T.apkNote} · در <a href={APK_RELEASE_URL}>{'صفحهٔ انتشار گیت\u200cهاب'}</a>، از بخش <bdi>Assets</bdi> فایل <bdi>ganjoor.apk</bdi> را بگیرید.
       </p>}
       {!ios && <p class="muted small">{T.apkStorage}</p>}
       {ios && steps && (

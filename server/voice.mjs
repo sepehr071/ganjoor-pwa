@@ -29,6 +29,11 @@ export function createVoiceServer({ env = process.env, fetchUpstream = fetch } =
   if ((!key?.trim() && !localOAuth) || !/^agent_[a-z0-9]+$/.test(agentId ?? '')) {
     throw new Error('Set ELEVENLABS_AGENT_ID and either ELEVENLABS_API_KEY or BEYT_VOICE_LOCAL_OAUTH=1.')
   }
+  const relayUrl = env.BEYT_VOICE_RELAY_URL && URL.parse(env.BEYT_VOICE_RELAY_URL)
+  if (env.BEYT_VOICE_RELAY_URL && (!relayUrl || relayUrl.protocol !== 'wss:' ||
+      relayUrl.username || relayUrl.password || relayUrl.search || relayUrl.hash || localOAuth)) {
+    throw new Error('BEYT_VOICE_RELAY_URL requires a clean WSS URL and an ElevenLabs API key.')
+  }
 
   const allowedOrigins = new Set((env.BEYT_VOICE_ORIGINS || localOrigins).split(',').map((entry) => entry.trim()))
   for (const origin of allowedOrigins) {
@@ -37,8 +42,10 @@ export function createVoiceServer({ env = process.env, fetchUpstream = fetch } =
     }
   }
 
-  const tokenUrl = new URL('https://api.elevenlabs.io/v1/convai/conversation/token')
+  const upstreamConversation = 'api.elevenlabs.io/v1/convai/conversation'
+  const tokenUrl = new URL(`https://${upstreamConversation}/${relayUrl ? 'get-signed-url' : 'token'}`)
   tokenUrl.searchParams.set('agent_id', agentId)
+  if (relayUrl) tokenUrl.searchParams.set('include_conversation_id', 'true')
 
   return createServer(async (request, response) => {
     response.setHeader('Cache-Control', 'no-store')
@@ -80,8 +87,19 @@ export function createVoiceServer({ env = process.env, fetchUpstream = fetch } =
         return json(response, 502, { error: 'Voice service unavailable.' })
       }
 
-      const { token } = await upstream.json()
-      if (typeof token === 'string' && token.trim()) return json(response, 200, { token })
+      const { token, signed_url } = await upstream.json()
+      if (relayUrl) {
+        const signed = typeof signed_url === 'string' ? URL.parse(signed_url) : null
+        const signature = signed?.searchParams.get('conversation_signature')
+        if (signed && `${signed.origin}${signed.pathname}` === `wss://${upstreamConversation}` &&
+            signed.searchParams.get('agent_id') === agentId && signature) {
+          const url = new URL(relayUrl)
+          url.searchParams.set('conversation_signature', signature)
+          return json(response, 200, { signedUrl: url.href })
+        }
+      } else if (typeof token === 'string' && token.trim()) {
+        return json(response, 200, { token })
+      }
     } catch {
       return json(response, 503, { error: 'Voice service unavailable.' })
     }

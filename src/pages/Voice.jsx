@@ -19,7 +19,7 @@ const MESSAGES = {
   ending: 'در حال پایان تماس…',
 }
 
-async function getToken(signal) {
+async function getSessionAuth(signal) {
   const response = await fetch(voiceTokenUrl, {
     method: 'POST',
     signal,
@@ -28,9 +28,16 @@ async function getToken(signal) {
     redirect: 'error',
   })
   if (!response.ok) throw Object.assign(new Error(), { status: response.status })
-  const { token } = await response.json()
-  if (typeof token !== 'string' || !token.trim()) throw new Error()
-  return token
+  const { token, signedUrl } = await response.json()
+  if (typeof signedUrl === 'string') {
+    const relay = new URL(signedUrl)
+    const relayOrigin = new URL(voiceTokenUrl).origin.replace(/^https:/, 'wss:')
+    if (relay.protocol === 'wss:' && relay.origin === relayOrigin && !relay.username && !relay.password && !relay.hash) {
+      return { signedUrl, connectionType: 'websocket' }
+    }
+  }
+  if (typeof token === 'string' && token.trim()) return { conversationToken: token, connectionType: 'webrtc' }
+  throw new Error()
 }
 
 function errorText(error) {
@@ -103,13 +110,12 @@ function VoiceCall({ context }) {
 
     call.opening = (async () => {
       try {
-        const token = await getToken(call.abort.signal)
+        const sessionAuth = await getSessionAuth(call.abort.signal)
         const { Conversation } = await import('@elevenlabs/client')
         if (!isCurrent()) return
         stop()
         call.session = await Conversation.startSession({
-          conversationToken: token,
-          connectionType: 'webrtc',
+          ...sessionAuth,
           useWakeLock: false,
           onConnect: () => { if (isCurrent()) setStatus((state) => state === 'connecting' ? 'listening' : state) },
           onModeChange: ({ mode }) => { if (isCurrent()) setStatus(mode) },

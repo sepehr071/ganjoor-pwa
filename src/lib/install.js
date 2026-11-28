@@ -1,8 +1,8 @@
 // "Get the app": the browser install prompt (Chromium only, captured as early as possible) and the Android APK link.
 import { isNative } from './native.js'
 
-/** Always the newest release's APK (GitHub resolves /latest/ to the newest non-draft release). */
-export const APK_URL = 'https://github.com/sepehr071/ganjoor-pwa/releases/latest/download/ganjoor.apk'
+export const APK_RELEASE_URL = 'https://github.com/sepehr071/ganjoor-pwa/releases/latest'
+export const APK_URL = import.meta.env.VITE_APK_URL || `${APK_RELEASE_URL}/download/ganjoor.apk`
 
 let deferred = null
 const subs = new Set()
