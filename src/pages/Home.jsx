@@ -8,6 +8,7 @@ import { useStored, HISTORY, BOOKMARKS, toggleBookmark } from '../lib/store.js'
 import { coupletText, groupCouplets, poetName, toFaDigits } from '../lib/poem.js'
 import { todayPoem } from '../lib/dailyPoems.js'
 import { usePlayer, play, toggle } from '../lib/player.js'
+import { voiceTokenUrl } from '../lib/voice.js'
 import { Icon } from '../components/Icon.jsx'
 import { Arch } from '../components/Arch.jsx'
 import { GetApp } from '../components/GetApp.jsx'
@@ -170,6 +171,11 @@ export default function Home() {
       <Hero search={searchLayout.short ? search : null} />
       <div class="home-body wrap stack-lg">
         {!searchLayout.short && search}
+        {voiceTokenUrl && (
+          <a class="btn primary home-assistant" href={url('/voice')}>
+            <Icon name="mic" size={24} /> دستیار هوشمند
+          </a>
+        )}
 
         <nav class="quick" aria-label="شروع سریع">
           <a class="btn browse-poets" href={url('/poets')}><Icon name="poets" size={20} />مرور شاعران و آثارشان</a>

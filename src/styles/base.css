@@ -595,6 +595,7 @@ details.summary p { padding-bottom: var(--space-4); }
 .hero-short .hero-plate { height: clamp(4rem, 12svh, 6rem); object-position: 50% 38%; }
 .home-body { max-width: 62rem; padding-block-start: var(--space-5); }
 .home-body.stack-lg > * + * { margin-top: 22px; }
+.home-assistant { width: 100%; min-height: 56px; font-size: 1.125rem; }
 .quick { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .quick .browse-poets, .poet-actions .poet-search { grid-column: 1 / -1; }
 .rich {

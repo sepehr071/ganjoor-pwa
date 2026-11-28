@@ -1,6 +1,7 @@
 .voice-page { max-width: 38rem; margin-inline: auto; }
 .voice-heading { flex-wrap: nowrap; }
 .voice-heading h1 { margin: 0; font-size: clamp(1.35rem, 5.5vw, 1.9rem); }
+.voice-heading + .voice-controls { margin-block-start: var(--space-4); }
 .voice-folio { margin: var(--space-4) 0; text-align: center; }
 .voice-folio blockquote {
   margin: 0;
@@ -9,7 +10,7 @@
   overflow-wrap: anywhere;
 }
 .voice-folio figcaption { margin-block-start: var(--space-2); font-size: 0.875rem; }
-.voice-controls, .voice-code { display: grid; gap: var(--space-3); }
+.voice-controls { display: grid; gap: var(--space-3); }
 .voice-controls p { margin: 0; }
 .voice-controls [role='alert'] { color: var(--text); border-inline-start: 3px solid var(--cinnabar); padding-inline-start: var(--space-2); }
 .voice-actions p:empty { display: none; }

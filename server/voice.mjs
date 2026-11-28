@@ -1,11 +1,9 @@
 import { execFile } from 'node:child_process'
-import { createHash, timingSafeEqual } from 'node:crypto'
 import { createServer } from 'node:http'
 import { pathToFileURL } from 'node:url'
 import { promisify } from 'node:util'
 
 const localOrigins = 'https://localhost,http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173'
-const digest = (value) => createHash('sha256').update(value).digest()
 const run = promisify(execFile)
 
 async function localToken(agentId) {
@@ -24,12 +22,12 @@ function json(response, status, body) {
 }
 
 export function createVoiceServer({ env = process.env, fetchUpstream = fetch } = {}) {
-  const { ELEVENLABS_API_KEY: key, ELEVENLABS_AGENT_ID: agentId, BEYT_VOICE_ACCESS_CODE: accessCode } = env
+  const { ELEVENLABS_API_KEY: key, ELEVENLABS_AGENT_ID: agentId } = env
   const localOAuth = !key?.trim() && env.BEYT_VOICE_LOCAL_OAUTH === '1'
   const host = env.BEYT_VOICE_HOST || env.HOST || '127.0.0.1'
   if (localOAuth && host !== '127.0.0.1') throw new Error('Local ElevenLabs OAuth requires a 127.0.0.1 bind.')
-  if ((!key?.trim() && !localOAuth) || !/^agent_[a-z0-9]+$/.test(agentId ?? '') || !/^[\x21-\x7e]{12,}$/.test(accessCode ?? '')) {
-    throw new Error('Set an ElevenLabs agent ID, a pilot access code of at least 12 ASCII characters without spaces, and ELEVENLABS_API_KEY or BEYT_VOICE_LOCAL_OAUTH=1.')
+  if ((!key?.trim() && !localOAuth) || !/^agent_[a-z0-9]+$/.test(agentId ?? '')) {
+    throw new Error('Set ELEVENLABS_AGENT_ID and either ELEVENLABS_API_KEY or BEYT_VOICE_LOCAL_OAUTH=1.')
   }
 
   const allowedOrigins = new Set((env.BEYT_VOICE_ORIGINS || localOrigins).split(',').map((entry) => entry.trim()))
@@ -39,7 +37,6 @@ export function createVoiceServer({ env = process.env, fetchUpstream = fetch } =
     }
   }
 
-  const expectedAuthorization = digest(`Bearer ${accessCode}`)
   const tokenUrl = new URL('https://api.elevenlabs.io/v1/convai/conversation/token')
   tokenUrl.searchParams.set('agent_id', agentId)
 
@@ -47,7 +44,7 @@ export function createVoiceServer({ env = process.env, fetchUpstream = fetch } =
     response.setHeader('Cache-Control', 'no-store')
     response.setHeader('Vary', 'Origin')
 
-    const { origin, authorization } = request.headers
+    const { origin } = request.headers
     if (origin !== undefined) {
       if (!allowedOrigins.has(origin)) return json(response, 403, { error: 'Origin not allowed.' })
       response.setHeader('Access-Control-Allow-Origin', origin)
@@ -57,6 +54,7 @@ export function createVoiceServer({ env = process.env, fetchUpstream = fetch } =
     if (request.method === 'OPTIONS' && origin) {
       response.writeHead(204, {
         'Access-Control-Allow-Methods': 'POST',
+        // Older apps still send this header.
         'Access-Control-Allow-Headers': 'Authorization',
       })
       return response.end()
@@ -65,9 +63,7 @@ export function createVoiceServer({ env = process.env, fetchUpstream = fetch } =
       response.setHeader('Allow', 'POST, OPTIONS')
       return json(response, 405, { error: 'Method not allowed.' })
     }
-    if (!timingSafeEqual(digest(authorization ?? ''), expectedAuthorization)) {
-      return json(response, 401, { error: 'Invalid access code.' })
-    }
+    if (!origin) return json(response, 403, { error: 'Origin not allowed.' })
     if (Number(request.headers['content-length']) > 0 || request.headers['transfer-encoding']) {
       return json(response, 400, { error: 'This endpoint accepts an empty request body.' })
     }

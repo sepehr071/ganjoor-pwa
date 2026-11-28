@@ -5,10 +5,8 @@ import { createVoiceServer } from './voice.mjs'
 const env = {
   ELEVENLABS_API_KEY: 'test-workspace-key',
   ELEVENLABS_AGENT_ID: 'agent_pilot',
-  BEYT_VOICE_ACCESS_CODE: 'test-pilot-code',
 }
 const origin = 'https://localhost'
-const authorization = `Bearer ${env.BEYT_VOICE_ACCESS_CODE}`
 let server, endpoint, upstream
 
 it('rejects using local CLI credentials on a non-loopback bind', () => {
@@ -31,8 +29,8 @@ afterEach(async () => {
   }
 })
 
-it('returns an uncached token in the workspace default environment to the authorized client', async () => {
-  const response = await fetch(endpoint, { method: 'POST', headers: { origin, authorization } })
+it('returns an uncached token in the workspace default environment without an access code', async () => {
+  const response = await fetch(endpoint, { method: 'POST', headers: { origin } })
   expect(response.status).toBe(200)
   expect(response.headers.get('cache-control')).toBe('no-store')
   expect(response.headers.get('access-control-allow-origin')).toBe(origin)
@@ -43,7 +41,7 @@ it('returns an uncached token in the workspace default environment to the author
   expect(options.redirect).toBe('error')
 })
 
-it('allows a Vite browser preflight without issuing a token', async () => {
+it('allows a legacy Authorization preflight without issuing a token', async () => {
   const origin = 'http://127.0.0.1:5173'
   const response = await fetch(endpoint, {
     method: 'OPTIONS',
@@ -56,16 +54,16 @@ it('allows a Vite browser preflight without issuing a token', async () => {
   expect(upstream).not.toHaveBeenCalled()
 })
 
-it('rejects foreign origins, unauthorized requests, and nonempty requests before contacting ElevenLabs', async () => {
-  const foreign = await fetch(endpoint, { method: 'POST', headers: { origin: `${origin}.invalid`, authorization } })
+it('rejects foreign origins, missing origins, and nonempty requests before contacting ElevenLabs', async () => {
+  const foreign = await fetch(endpoint, { method: 'POST', headers: { origin: `${origin}.invalid` } })
   expect(foreign.status).toBe(403)
   expect(foreign.headers.has('access-control-allow-origin')).toBe(false)
 
-  const wrongCode = await fetch(endpoint, { method: 'POST', headers: { origin, authorization: 'Bearer wrong' } })
-  expect(wrongCode.status).toBe(401)
-  expect(wrongCode.headers.get('access-control-allow-origin')).toBe(origin)
+  const missingOrigin = await fetch(endpoint, { method: 'POST' })
+  expect(missingOrigin.status).toBe(403)
+  expect(missingOrigin.headers.has('access-control-allow-origin')).toBe(false)
 
-  const withBody = await fetch(endpoint, { method: 'POST', headers: { origin, authorization }, body: '{}' })
+  const withBody = await fetch(endpoint, { method: 'POST', headers: { origin }, body: '{}' })
   expect(withBody.status).toBe(400)
   expect(upstream).not.toHaveBeenCalled()
 })
@@ -75,14 +73,14 @@ it.each([
   [429, 429],
 ])('maps upstream HTTP %i to %i without returning upstream details', async (status, expected) => {
   upstream.mockResolvedValueOnce(new Response(env.ELEVENLABS_API_KEY, { status }))
-  const response = await fetch(endpoint, { method: 'POST', headers: { origin, authorization } })
+  const response = await fetch(endpoint, { method: 'POST', headers: { origin } })
   expect(response.status).toBe(expected)
   expect(await response.text()).not.toContain(env.ELEVENLABS_API_KEY)
 })
 
 it('reports unavailable service after a network error without returning the exception', async () => {
   upstream.mockRejectedValueOnce(new Error(env.ELEVENLABS_API_KEY))
-  const response = await fetch(endpoint, { method: 'POST', headers: { origin, authorization } })
+  const response = await fetch(endpoint, { method: 'POST', headers: { origin } })
   expect(response.status).toBe(503)
   expect(await response.json()).toEqual({ error: 'Voice service unavailable.' })
 })

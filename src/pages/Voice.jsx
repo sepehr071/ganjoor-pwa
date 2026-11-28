@@ -19,10 +19,9 @@ const MESSAGES = {
   ending: 'در حال پایان تماس…',
 }
 
-async function getToken(accessCode, signal) {
+async function getToken(signal) {
   const response = await fetch(voiceTokenUrl, {
     method: 'POST',
-    headers: { Authorization: 'Bearer ' + accessCode },
     signal,
     cache: 'no-store',
     credentials: 'omit',
@@ -35,7 +34,6 @@ async function getToken(accessCode, signal) {
 }
 
 function errorText(error) {
-  if (error?.status === 401) return 'کد دسترسی درست نیست. کد را بررسی کنید و دوباره امتحان کنید.'
   if (error?.status === 429) return 'همراه صوتی فعلاً به سقف تماس رسیده است. کمی بعد امتحان کنید.'
   if (error?.name === 'NotAllowedError') return 'برای گفت\u200cوگو، دسترسی به میکروفون را فعال کنید.'
   if (error?.name === 'NotFoundError') return 'میکروفون پیدا نشد. اتصال میکروفون را بررسی کنید.'
@@ -50,7 +48,6 @@ async function closeSession(call) {
 }
 
 function VoiceCall({ context }) {
-  const [accessCode, setAccessCode] = useState('')
   const [status, setStatus] = useState('idle')
   const [error, setError] = useState('')
   const online = useOnline()
@@ -90,8 +87,7 @@ function VoiceCall({ context }) {
 
   function start(event) {
     event.preventDefault()
-    const code = accessCode.trim()
-    if (!code || !online || !canUseMic || currentCall.current || document.hidden) return
+    if (!online || !canUseMic || currentCall.current || document.hidden) return
 
     const call = { abort: new AbortController(), session: null, opening: null }
     currentCall.current = call
@@ -107,7 +103,7 @@ function VoiceCall({ context }) {
 
     call.opening = (async () => {
       try {
-        const token = await getToken(code, call.abort.signal)
+        const token = await getToken(call.abort.signal)
         const { Conversation } = await import('@elevenlabs/client')
         if (!isCurrent()) return
         stop()
@@ -128,10 +124,12 @@ function VoiceCall({ context }) {
           await closeSession(call)
           return
         }
-        call.session.sendContextualUpdate(
-          'کاربر در بیت دربارهٔ شعر زیر پرسش دارد. این داده از گنجور است. به آن به چشم متن مرجع نگاه کن و برای پاسخ بعدی از آن استفاده کن.\n' +
-          'عنوان: ' + context.poem_title + '\nبیت منتخب:\n' + context.focus_couplet + '\nمتن در دسترس:\n' + context.poem_text,
-        )
+        if (context) {
+          call.session.sendContextualUpdate(
+            'کاربر در بیت دربارهٔ شعر زیر پرسش دارد. این داده از گنجور است. به آن به چشم متن مرجع نگاه کن و برای پاسخ بعدی از آن استفاده کن.\n' +
+            'عنوان: ' + context.poem_title + '\nبیت منتخب:\n' + context.focus_couplet + '\nمتن در دسترس:\n' + context.poem_text,
+          )
+        }
       } catch (error) {
         done(errorText(error))
         await closeSession(call)
@@ -144,28 +142,13 @@ function VoiceCall({ context }) {
       <p id="voice-privacy" class="muted small">
         {'با شروع گفت\u200cوگو، صدا برای پردازش زنده به ElevenLabs فرستاده می\u200cشود. متن گفت\u200cوگو طبق تنظیمات همراه صوتی در ElevenLabs نگهداری می\u200cشود.'}
       </p>
-      {!active && (
-        <label class="voice-code">
-          کد دسترسی آزمایشی
-          <input
-            class="field"
-            type="password"
-            autoComplete="off"
-            dir="ltr"
-            spellCheck={false}
-            value={accessCode}
-            onInput={(event) => setAccessCode(event.currentTarget.value)}
-            required
-          />
-        </label>
-      )}
       <div class="row voice-actions">
         {active ? (
           <button class="btn" type="button" disabled={status === 'ending'} onClick={end}>
             <Icon name="close" size={18} />{status === 'connecting' ? 'لغو اتصال' : 'پایان گفت\u200cوگو'}
           </button>
         ) : (
-          <button class="btn primary" type="submit" disabled={!accessCode.trim() || !online || !canUseMic} aria-describedby="voice-privacy">
+          <button class="btn primary" type="submit" disabled={!online || !canUseMic} aria-describedby="voice-privacy">
             <Icon name="mic" size={19} />{'شروع گفت\u200cوگو'}
           </button>
         )}
@@ -185,31 +168,34 @@ function VoicePoem({ id, fromWidget }) {
   )
   const context = poem && voicePoemContext(poem, fromWidget)
 
-  return (
-    <article class="voice-page">
-      <header class="row voice-heading">
-        <a class="icon-btn" href={url('/poem/' + id)} aria-label="بازگشت به شعر"><Icon name="chevron" /></a>
-        <h1>{TITLE}</h1>
-      </header>
-      {loading ? <Loading label="در حال بارگیری شعر" /> : error ? <ErrorState error={error} onRetry={retry} /> : context ? (
-        <>
-          <figure class="folio voice-folio">
-            <blockquote>{context.focus_couplet}</blockquote>
-            <figcaption><a href={url('/poem/' + id)}>{context.poem_title}</a></figcaption>
-          </figure>
-          <VoiceCall context={context} />
-        </>
-      ) : (
-        <Empty>{'متن شعر برای گفت\u200cوگو در دسترس نیست.'}</Empty>
-      )}
-    </article>
-  )
+  if (loading) return <Loading label="در حال بارگیری شعر" />
+  if (error) return <ErrorState error={error} onRetry={retry} />
+  if (!context) return <Empty>{'متن شعر برای گفت\u200cوگو در دسترس نیست.'}</Empty>
+
+  return <>
+    <figure class="folio voice-folio">
+      <blockquote>{context.focus_couplet}</blockquote>
+      <figcaption><a href={url('/poem/' + id)}>{context.poem_title}</a></figcaption>
+    </figure>
+    <VoiceCall context={context} />
+  </>
 }
 
 export default function Voice({ id }) {
   const { query } = useLocation()
   const fromWidget = query.widget === '1'
-  useTitle(TITLE)
-  if (!/^[1-9]\d*$/.test(id)) return <Empty>شناسهٔ شعر معتبر نیست.</Empty>
-  return <VoicePoem key={id + ':' + fromWidget} id={id} fromWidget={fromWidget} />
+  const title = id ? TITLE : 'دستیار هوشمند'
+  useTitle(title)
+  if (id && !/^[1-9]\d*$/.test(id)) return <Empty>شناسهٔ شعر معتبر نیست.</Empty>
+  return (
+    <article class="voice-page">
+      <header class="row voice-heading">
+        <a class="icon-btn" href={url(id ? '/poem/' + id : '/')} aria-label={id ? 'بازگشت به شعر' : 'بازگشت به خانه'}>
+          <Icon name="chevron" />
+        </a>
+        <h1>{title}</h1>
+      </header>
+      {id ? <VoicePoem key={id + ':' + fromWidget} id={id} fromWidget={fromWidget} /> : <VoiceCall />}
+    </article>
+  )
 }

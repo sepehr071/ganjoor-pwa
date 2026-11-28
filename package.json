@@ -1,6 +1,6 @@
 {
   "name": "ganjoor-pwa-proposal",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "type": "module",
   "description": "Beyt (بیت): an unofficial Persian-poetry reader built on Ganjoor's open data and public API",

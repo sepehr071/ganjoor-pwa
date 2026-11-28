@@ -167,6 +167,7 @@ function Shell() {
             <Route path="/poet/:id" component={Poet} />
             <Route path="/cat/:id" component={Cat} />
             <Route path="/poem/:id" component={Poem} />
+            {Voice && voiceTokenUrl && <Route path="/voice" component={Voice} />}
             {Voice && voiceTokenUrl && <Route path="/voice/:id" component={Voice} />}
             <Route path="/search" component={Search} />
             <Route path="/faal" component={Faal} />
